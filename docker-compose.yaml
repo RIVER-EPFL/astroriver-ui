@@ -26,8 +26,12 @@ services:
       - DB_PASSWORD=psql
       - DB_NAME=postgres
       - DB_PREFIX=postgresql+asyncpg
+      - ASTROCAST_API_KEY=${ASTROCAST_API_KEY}
+      - ASTROCAST_API_URL=${ASTROCAST_API_URL}
+    ports:
+      - 8005:8000
     depends_on:
-        - astroriver-db
+      - astroriver-db
     volumes:
       - ../river-api/app:/app/app
 

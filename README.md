@@ -1,4 +1,15 @@
 # astroriver-frontend
+The frontend application for the astroriver project.
+
+## Application relationships
+
+This frontend application requires the database and endpoints served by:
+
+- [astroriver-bff](https://github.com/RIVER-EPFL/astroriver-bff)
+
+which in turn requires the database and endpoints served by:
+
+- [river-api](https://github.com/RIVER-EPFL/river-api)
 
 ## Installation
 
