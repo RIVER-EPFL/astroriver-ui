@@ -50,7 +50,7 @@ const AtrocastList = () => {
             >
                 {/* <TextField source="messageGuid" />
                 <TextField source="deviceGuid" /> */}
-                <TextField source="data" />
+                <TextField source="decoded_data" />
                 <NumberField source="messageSize" />
                 <NumberField source="latitude" />
                 <NumberField source="longitude" />

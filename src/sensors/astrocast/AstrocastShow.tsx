@@ -39,13 +39,16 @@ const AstrocastShowActions = () => {
 const AstrocastShow = () => (
     <Show actions={<AstrocastShowActions />}>
         <SimpleShowLayout>
-            <TextField source="id" />
-            <TextField source="messageGuid" />
-            <TextField source="deviceGuid" />
-            <TextField source="data" />
-            <NumberField source="messageSize" />
+            <TextField source="data" label="Data (Raw base64)" />
+            <TextField source="decoded_data" />
+            <TextField source="id" label="Local UUID4" />
+            <TextField source="messageGuid" label="Astrocast message GUID" />
+            <TextField source="deviceGuid" label="Astrocast device GUID" />
+
+
             <NumberField source="latitude" />
             <NumberField source="longitude" />
+
             <DateField
                 label="Requested at (from local API to Astrocast API)"
                 source="requested_at"
@@ -63,6 +66,8 @@ const AstrocastShow = () => (
                 showTime={true}
             />
 
+            <NumberField source="callbackDeliveryStatus" />
+            <NumberField source="messageSize" />
         </SimpleShowLayout>
     </Show >
 );
