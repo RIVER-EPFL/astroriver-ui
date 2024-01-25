@@ -27,7 +27,7 @@ import {
 } from 'recharts';
 
 
-const AstrocastShowActions = () => {
+const AtrocastMessageShowActions = () => {
     const { permissions } = usePermissions();
     return (
         <TopToolbar>
@@ -36,8 +36,8 @@ const AstrocastShowActions = () => {
     );
 }
 
-const AstrocastShow = () => (
-    <Show actions={<AstrocastShowActions />}>
+const AtrocastMessageShow = () => (
+    <Show actions={<AtrocastMessageShowActions />}>
         <SimpleShowLayout>
             <TextField source="data" label="Data (Raw base64)" />
             <TextField source="decoded_data" />
@@ -72,4 +72,4 @@ const AstrocastShow = () => (
     </Show >
 );
 
-export default AstrocastShow;
+export default AtrocastMessageShow;

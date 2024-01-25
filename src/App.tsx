@@ -59,11 +59,9 @@ const App = () => {
                 authProvider.current = keycloakAuthProvider(keycloakClient, {
                     onPermissions: getPermissions,
                 });
-                dataProvider.current = addUploadCapabilities(
-                    simpleRestProvider(
-                        '/api',
-                        httpClient(keycloakClient)
-                    )
+                dataProvider.current = simpleRestProvider(
+                    '/api',
+                    httpClient(keycloakClient)
                 );
                 setKeycloak(keycloakClient);
                 setLoading(false);
@@ -93,7 +91,8 @@ const App = () => {
                     <Resource name="sensors" {...sensors.sensor} />
                     <Resource name="sensorparameters" {...sensors.parameters} />
                     <Resource name="data" {...data} />
-                    <Resource name="astrocast" {...sensors.astrocast} />
+                    <Resource name="astrocast_messages" {...sensors.astrocast_messages} />
+                    <Resource name="astrocast_devices" {...sensors.astrocast_devices} />
                     {permissions ? (
                         <>
                             {permissions === 'admin' ? (

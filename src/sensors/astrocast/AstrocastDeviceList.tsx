@@ -21,7 +21,7 @@ import { Card, CardContent } from '@mui/material';
 import MailIcon from '@mui/icons-material/MailOutline';
 import CategoryIcon from '@mui/icons-material/LocalOffer';
 import Brightness1TwoToneIcon from '@mui/icons-material/Brightness1TwoTone';
-const AtrocastListActions = () => {
+const AtrocastDeviceListActions = () => {
     const { permissions } = usePermissions();
     return (
         <TopToolbar>
@@ -31,7 +31,7 @@ const AtrocastListActions = () => {
     );
 }
 
-const AtrocastList = () => {
+const AtrocastDeviceList = () => {
     const { permissions } = usePermissions();
 
     // Set to green icon
@@ -41,35 +41,22 @@ const AtrocastList = () => {
 
     return (
         <List disableSyncWithLocation
-            actions={<AtrocastListActions />}
+            actions={<AtrocastDeviceListActions />}
             perPage={25}
         >
             <Datagrid
                 bulkActionButtons={permissions === 'admin' ? true : false}
                 rowClick="show"
             >
-                {/* <TextField source="messageGuid" />
-                <TextField source="deviceGuid" /> */}
-                <TextField source="decoded_data" />
-                <NumberField source="messageSize" />
-                <NumberField source="latitude" />
-                <NumberField source="longitude" />
-                <DateField
-                    label="Received Date"
-                    source="receivedDate"
-                    // sortable={false}
-                    showTime={true}
-                />
-                <DateField
-                    label="Created Date"
-                    source="createdDate"
-                    // sortable={false}
-                    showTime={true}
-                />
+                <TextField source="name" sortable={false} />
+                <NumberField source="deviceTypeName" />
+                <NumberField source="serialNumber" />
+                <DateField source="lastMessageDate" showTime={true} />
+                <DateField source="lastLocationDate" showTime={true} />
             </Datagrid>
         </List >
 
     )
 };
 
-export default AtrocastList;
+export default AtrocastDeviceList;
