@@ -15,7 +15,8 @@ import {
     FilterLiveSearch,
     FilterList,
     FilterListItem,
-    BooleanField
+    BooleanField,
+    FunctionField,
 } from "react-admin";
 import { Card, CardContent } from '@mui/material';
 import MailIcon from '@mui/icons-material/MailOutline';
@@ -48,10 +49,20 @@ const AtrocastMessageList = () => {
                 bulkActionButtons={permissions === 'admin' ? true : false}
                 rowClick="show"
             >
-                {/* <TextField source="messageGuid" />
-                <TextField source="deviceGuid" /> */}
                 <TextField source="decoded_data" sortable={false} />
                 <NumberField source="messageSize" />
+                <ReferenceField
+                    label="Astrocast Device"
+                    source="deviceGuid"
+                    reference="astrocast_devices"
+                    link="show"
+                >
+                    <FunctionField
+                        label="Active"
+                        render={(record) => `${record.name} (${record.deviceTypeName})`}
+
+                    />
+                </ReferenceField>
                 <NumberField source="latitude" />
                 <NumberField source="longitude" />
                 <DateField

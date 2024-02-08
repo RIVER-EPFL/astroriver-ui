@@ -15,6 +15,7 @@ import {
     DeleteButton,
     usePermissions,
     DateField,
+    ReferenceManyCount,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 import {
     LineChart,
@@ -43,6 +44,12 @@ const AtrocastDeviceShow = () => (
             <TextField source="id" label="ID (Astrocast GUID)" />
             <TextField source="name" />
             <TextField source="description" />
+            <ReferenceManyCount
+                label="Messages"
+                reference="astrocast_messages"
+                target="deviceGuid"
+                link
+            />
             <NumberField source="lastLatitude" />
             <NumberField source="lastLongitude" />
             <NumberField source="deviceType" />

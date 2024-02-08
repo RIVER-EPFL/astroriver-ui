@@ -49,7 +49,13 @@ const AtrocastDeviceList = () => {
                 rowClick="show"
             >
                 <TextField source="name" sortable={false} />
-                <NumberField source="deviceTypeName" />
+                <TextField source="deviceTypeName" />
+                <ReferenceManyCount
+                    label="Messages"
+                    reference="astrocast_messages"
+                    target="deviceGuid"
+                    link
+                />
                 <NumberField source="serialNumber" />
                 <DateField source="lastMessageDate" showTime={true} />
                 <DateField source="lastLocationDate" showTime={true} />

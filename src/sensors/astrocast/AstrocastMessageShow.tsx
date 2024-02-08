@@ -13,6 +13,7 @@ import {
     TopToolbar,
     DeleteButton,
     usePermissions,
+    FunctionField,
     DateField,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 import {
@@ -44,6 +45,18 @@ const AtrocastMessageShow = () => (
             <TextField source="id" label="Local UUID4" />
             <TextField source="messageGuid" label="Astrocast message GUID" />
             <TextField source="deviceGuid" label="Astrocast device GUID" />
+            <ReferenceField
+                label="Astrocast Device"
+                source="deviceGuid"
+                reference="astrocast_devices"
+                link="show"
+            >
+                <FunctionField
+                    label="Active"
+                    render={(record) => `${record.name} (${record.deviceTypeName})`}
+
+                />
+            </ReferenceField>
 
 
             <NumberField source="latitude" />

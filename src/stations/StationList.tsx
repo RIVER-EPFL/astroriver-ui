@@ -8,6 +8,7 @@ import {
     CreateButton,
     ExportButton,
     NumberField,
+    FunctionField,
     DateField,
     ReferenceManyCount,
     ArrayField,
@@ -49,22 +50,22 @@ const SensorList = () => {
                 rowClick="show"
             >
                 <TextField source="name" />
-                <TextField source="description" />
-                <BooleanField source="healthy" label="Health" TrueIcon={TrueIcon} FalseIcon={FalseIcon} />
-                <NumberField source="temperature_1" />
-                <NumberField source="temperature_2" />
-                <TextField
-                    label="Records"
-                    source="data.qty_records"
-                    sortable={false}
-                />
-                <NumberField
-                    source="battery_voltage"
-                    sortable={false}
-                />
+                <ReferenceField
+                    label="Astrocast Device"
+                    source="associated_astrocast_device"
+                    reference="astrocast_devices"
+                    link="show"
+                >
+                    <FunctionField
+                        label="Active"
+                        render={(record) => `${record.name} (${record.deviceTypeName})`}
+
+                    />
+                </ReferenceField>
+
                 <DateField
-                    label="Data end"
-                    source="last_data_utc"
+                    label="Time added (UTC)"
+                    source="time_added_utc"
                     sortable={false}
                     showTime={true}
                 />

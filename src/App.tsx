@@ -23,6 +23,7 @@ import Layout from './Layout';
 import users from './users';
 import sensors from './sensors';
 import data from "./data";
+import stations from './stations';
 import axios from 'axios';
 import addUploadCapabilities from './addUploadFeature'
 import SensorDataShow from './sensors/SensorDataShow';
@@ -88,9 +89,9 @@ const App = () => {
         >
             {permissions => (
                 <>
-                    <Resource name="sensors" {...sensors.sensor} />
-                    <Resource name="sensorparameters" {...sensors.parameters} />
-                    <Resource name="data" {...data} />
+                    <Resource name="stations" {...stations} />
+                    {/* <Resource name="sensorparameters" {...sensors.parameters} /> */}
+                    {/* <Resource name="data" {...data} /> */}
                     <Resource name="astrocast_messages" {...sensors.astrocast_messages} />
                     <Resource name="astrocast_devices" {...sensors.astrocast_devices} />
                     {permissions ? (

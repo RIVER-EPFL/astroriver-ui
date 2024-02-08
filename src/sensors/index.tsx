@@ -1,22 +1,23 @@
-import SensorCreate from './SensorCreate';
-import SensorEdit from './SensorEdit';
-import SensorList from './SensorList';
-import SensorShow from './SensorShow';
-import SensorDataCreate from './SensorDataCreate';
-import SensorDataEdit from './SensorDataEdit';
-import SensorDataShow from './SensorDataShow';
+import SensorCreate from '../stations/StationCreate';
+import StationEdit from '../stations/StationEdit';
+import SensorList from '../stations/StationList';
+import StationShow from '../stations/StationShow';
+
 import AstrocastMessageShow from './astrocast/AstrocastMessageShow';
 import AstrocastMessageList from './astrocast/AstrocastMessageList';
 import AstrocastDeviceShow from './astrocast/AstrocastDeviceShow';
 import AstrocastDeviceList from './astrocast/AstrocastDeviceList';
 import NothingList from '../NothingToSee';
 import SatelliteAltIcon from '@mui/icons-material/SatelliteAlt';
+import RouterIcon from '@mui/icons-material/Router';
+import FactoryIcon from '@mui/icons-material/Factory';
+
 
 const sensor = {
     create: SensorCreate,
-    edit: SensorEdit,
+    edit: StationEdit,
     list: SensorList,
-    show: SensorShow,
+    show: StationShow,
     options: {
         label: 'Sensors',
     },
@@ -39,7 +40,7 @@ const astrocast_messages = {
     show: AstrocastMessageShow,
     list: AstrocastMessageList,
     options: {
-        label: 'Astrocast',
+        label: 'Astrocast Messages',
     },
     icon: SatelliteAltIcon,
 };
@@ -52,7 +53,7 @@ const astrocast_devices = {
     options: {
         label: 'Astrocast Devices',
     },
-    icon: SatelliteAltIcon,
+    icon: RouterIcon,
 };
 export default {
     sensor: sensor,
