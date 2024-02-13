@@ -16,6 +16,7 @@ import {
     Datagrid,
     useGetRecordId,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
+import { Grid } from '@mui/material';
 
 const StationShowActions = () => {
     const { permissions } = usePermissions();
@@ -32,9 +33,22 @@ const StationShow = () => {
     console.log("recordId", recordId);
     return (
         <Show actions={<StationShowActions />}>
+
             <SimpleShowLayout>
-                <TextField source="name" label="Station name" />
-                <TextField source="acronym" label="Station acronym" />
+                <Grid container>
+                    <Grid item xs={8}>
+                        <SimpleShowLayout>
+                            <TextField source="name" label="Station name" />
+                        </SimpleShowLayout>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <SimpleShowLayout>
+                            <TextField source="acronym" label="Station acronym" />
+                        </SimpleShowLayout>
+                    </Grid>
+                </Grid>
+
+
                 <TextField source="catchment_name" />
                 <TextField source="description" />
 

@@ -90,7 +90,7 @@ const App = () => {
             {permissions => (
                 <>
                     <Resource name="stations" {...stations} />
-                    {/* <Resource name="sensorparameters" {...sensors.parameters} /> */}
+                    <Resource name="sensor_devices" {...sensors.devices} />
                     {/* <Resource name="data" {...data} /> */}
                     <Resource name="astrocast_messages" {...sensors.astrocast_messages} />
                     <Resource name="astrocast_devices" {...sensors.astrocast_devices} />

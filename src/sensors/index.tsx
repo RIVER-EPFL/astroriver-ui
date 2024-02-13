@@ -11,7 +11,12 @@ import NothingList from '../NothingToSee';
 import SatelliteAltIcon from '@mui/icons-material/SatelliteAlt';
 import RouterIcon from '@mui/icons-material/Router';
 import FactoryIcon from '@mui/icons-material/Factory';
+import DeviceThermostatIcon from '@mui/icons-material/DeviceThermostat';
 
+import SensorDeviceCreate from './devices/SensorDeviceCreate';
+import SensorDeviceEdit from './devices/SensorDeviceEdit';
+import SensorDeviceList from './devices/SensorDeviceList';
+import SensorDeviceShow from './devices/SensorDeviceShow';
 
 const sensor = {
     create: SensorCreate,
@@ -35,8 +40,6 @@ const parameters = {
 };
 
 const astrocast_messages = {
-    // create: SensorDataCreate,
-    // edit: SensorDataEdit,
     show: AstrocastMessageShow,
     list: AstrocastMessageList,
     options: {
@@ -46,8 +49,6 @@ const astrocast_messages = {
 };
 
 const astrocast_devices = {
-    // create: SensorDataCreate,
-    // edit: SensorDataEdit,
     show: AstrocastDeviceShow,
     list: AstrocastDeviceList,
     options: {
@@ -55,8 +56,21 @@ const astrocast_devices = {
     },
     icon: RouterIcon,
 };
+
+const sensor_devices = {
+    create: SensorDeviceCreate,
+    edit: SensorDeviceEdit,
+    show: SensorDeviceShow,
+    list: SensorDeviceList,
+    options: {
+        label: 'Sensor Inventory',
+    },
+    icon: DeviceThermostatIcon,
+};
+
 export default {
     sensor: sensor,
+    devices: sensor_devices,
     parameters: parameters,
     astrocast_messages: astrocast_messages,
     astrocast_devices: astrocast_devices,
