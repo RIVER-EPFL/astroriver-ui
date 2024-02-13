@@ -12,11 +12,8 @@ import {
     TabbedShowLayout,
     RichTextField,
     NumberField,
-    BooleanField,
     ReferenceManyField,
     Datagrid,
-    useRecordContext,
-    WithRecord,
     useGetRecordId,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 
@@ -36,9 +33,15 @@ const StationShow = () => {
     return (
         <Show actions={<StationShowActions />}>
             <SimpleShowLayout>
-                <TextField source="name" />
+                <TextField source="name" label="Station name" />
+                <TextField source="acronym" label="Station acronym" />
+                <TextField source="catchment_name" />
                 <TextField source="description" />
-                <TextField source="comment" />
+
+                {/* Show the x and y coordinates as strings to avoid commas */}
+                <TextField source="x_coordinate" label="X coordinate" />
+                <TextField source="y_coordinate" label="Y coordinate" />
+
                 <ReferenceField
                     label="Astrocast Device"
                     source="associated_astrocast_device"

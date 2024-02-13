@@ -6,6 +6,7 @@ import {
     required,
     ReferenceInput,
     SelectInput,
+    NumberInput,
 } from 'react-admin';
 
 const StationEdit = () => {
@@ -13,9 +14,12 @@ const StationEdit = () => {
         <Edit>
             <SimpleForm>
                 <TextInput disabled label="Id" source="id" />
-                <TextInput source="name" />
+                <TextInput source="name" label="Station name" />
+                <TextInput source="acronym" label="Station acronym" />
+                <TextInput source="catchment_name" />
                 <TextInput source="description" />
-                <TextInput source="comment" />
+                <NumberInput source="x_coordinate" label="X coordinate" />
+                <NumberInput source="y_coordinate" label="Y coordinate" />
                 <ReferenceInput
                     source="associated_astrocast_device"
                     reference="astrocast_devices"

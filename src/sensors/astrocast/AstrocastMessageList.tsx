@@ -44,6 +44,7 @@ const AtrocastMessageList = () => {
         <List disableSyncWithLocation
             actions={<AtrocastMessageListActions />}
             perPage={25}
+            sort={{ field: 'createdDate', order: 'DESC' }}
         >
             <Datagrid
                 bulkActionButtons={permissions === 'admin' ? true : false}
