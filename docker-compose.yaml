@@ -64,7 +64,7 @@ services:
       - ../astroriver-ui:/app
 
   astroriver-db:
-    image: postgis/postgis:16-master
+    image: postgres:16.1
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=psql

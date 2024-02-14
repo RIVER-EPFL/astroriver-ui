@@ -1,32 +1,27 @@
 /* eslint react/jsx-key: off */
-
 import {
-    Create,
+    Edit,
     SimpleForm,
-    TextField,
     TextInput,
     required,
     DateTimeInput,
 } from 'react-admin';
 
-
-const SensorDeviceCreate = () => {
-
+const SensorEdit = () => {
     return (
-        <Create redirect="list">
-            <SimpleForm >
-                <TextField source="id" />
+        <Edit>
+            <SimpleForm>
+                <TextInput disabled label="Id" source="id" />
                 <TextInput source="parameter_name" validate={[required()]} />
                 <TextInput source="parameter_acronym" />
                 <TextInput source="parameter_unit" />
                 <TextInput source="parameter_db_name" />
                 <TextInput source="serial_number" />
                 <TextInput source="model" />
-                <DateTimeInput source="installed_on" />
                 <DateTimeInput source="calibrated_on" />
             </SimpleForm>
-        </Create>
+        </Edit>
     )
 };
 
-export default SensorDeviceCreate;
+export default SensorEdit;

@@ -2,27 +2,15 @@ import {
     List,
     Datagrid,
     TextField,
-    ReferenceField,
     usePermissions,
     TopToolbar,
     CreateButton,
     ExportButton,
-    NumberField,
-    FunctionField,
     DateField,
-    ReferenceManyCount,
-    ArrayField,
-    SavedQueriesList,
-    FilterLiveSearch,
-    FilterList,
-    FilterListItem,
-    BooleanField
+    NumberField,
 } from "react-admin";
-import { Card, CardContent } from '@mui/material';
-import MailIcon from '@mui/icons-material/MailOutline';
-import CategoryIcon from '@mui/icons-material/LocalOffer';
 import Brightness1TwoToneIcon from '@mui/icons-material/Brightness1TwoTone';
-const SensorDeviceListListActions = () => {
+const SensorListActions = () => {
     const { permissions } = usePermissions();
     return (
         <TopToolbar>
@@ -32,7 +20,7 @@ const SensorDeviceListListActions = () => {
     );
 }
 
-const SensorDeviceList = () => {
+const SensorList = () => {
     const { permissions } = usePermissions();
 
     // Set to green icon
@@ -42,29 +30,21 @@ const SensorDeviceList = () => {
 
     return (
         <List disableSyncWithLocation
-            actions={<SensorDeviceListListActions />}
+            actions={<SensorListActions />}
             perPage={25}
         >
             <Datagrid
                 bulkActionButtons={permissions === 'admin' ? true : false}
                 rowClick="show"
             >
-                <TextField source="parameter_name" />
-                <TextField source="parameter_acronym" />
-                <TextField source="parameter_unit" />
-                <TextField source="parameter_db_name" />
-                <TextField source="serial_number" />
-                <TextField source="model" />
-
+                <TextField source="station.name" />
+                <NumberField source="sensor_position" />
+                <TextField source="sensor.parameter_name" />
+                <TextField source="sensor.parameter_unit" />
+                <TextField source="sensor.serial_number" />
                 <DateField
                     label="Installed on"
                     source="installed_on"
-                    sortable={false}
-                    showTime={true}
-                />
-                <DateField
-                    label="Last Updated"
-                    source="calibrated_on"
                     sortable={false}
                     showTime={true}
                 />
@@ -74,4 +54,4 @@ const SensorDeviceList = () => {
     )
 };
 
-export default SensorDeviceList;
+export default SensorList;

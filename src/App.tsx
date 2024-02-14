@@ -89,11 +89,11 @@ const App = () => {
         >
             {permissions => (
                 <>
-                    <Resource name="stations" {...stations} />
-                    <Resource name="sensor_devices" {...sensors.devices} />
-                    {/* <Resource name="data" {...data} /> */}
+                    <Resource name="stations" {...stations.stations} />
+                    <Resource name="sensors" {...sensors.sensors} />
                     <Resource name="astrocast_messages" {...sensors.astrocast_messages} />
                     <Resource name="astrocast_devices" {...sensors.astrocast_devices} />
+                    <Resource name="station_sensors" {...stations.sensors} />
                     {permissions ? (
                         <>
                             {permissions === 'admin' ? (

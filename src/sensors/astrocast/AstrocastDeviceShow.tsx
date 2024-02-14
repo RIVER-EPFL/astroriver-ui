@@ -9,6 +9,7 @@ import {
     List,
     useRecordContext,
     ArrayField,
+    FunctionField,
     BooleanField,
     EditButton,
     TopToolbar,
@@ -52,7 +53,7 @@ const AtrocastDeviceShow = () => (
             />
             <NumberField source="lastLatitude" />
             <NumberField source="lastLongitude" />
-            <NumberField source="deviceType" />
+            <FunctionField source="deviceType" render={record => `${record.deviceType} (${record.deviceTypeName})`} />
             <NumberField source="deviceState" />
             <DateField source="disabledUntilDate" />
             <TextField source="modelNumber" />

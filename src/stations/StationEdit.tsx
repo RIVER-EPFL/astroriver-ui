@@ -7,7 +7,12 @@ import {
     ReferenceInput,
     SelectInput,
     NumberInput,
+    ArrayInput,
+    SimpleFormIterator,
+    useGetRecordId,
+    useGetOne,
 } from 'react-admin';
+
 
 const StationEdit = () => {
     return (
@@ -31,6 +36,7 @@ const StationEdit = () => {
                         validate={required()}
                     />
                 </ReferenceInput>
+
             </SimpleForm>
         </Edit>
     )

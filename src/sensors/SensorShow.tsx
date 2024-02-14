@@ -9,9 +9,8 @@ import {
     DateField,
     useGetRecordId,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
-import { Grid } from '@mui/material';
 
-const StationDeviceShowActions = () => {
+const SensorShowActions = () => {
     const { permissions } = usePermissions();
     return (
         <TopToolbar>
@@ -21,11 +20,11 @@ const StationDeviceShowActions = () => {
 }
 
 
-const StationDeviceShow = () => {
+const SensorShow = () => {
     const recordId = useGetRecordId();
     console.log("recordId", recordId);
     return (
-        <Show actions={<StationDeviceShowActions />}>
+        <Show actions={<SensorShowActions />}>
             <SimpleShowLayout>
                 <TextField source="parameter_name" />
                 <TextField source="parameter_acronym" />
@@ -33,13 +32,6 @@ const StationDeviceShow = () => {
                 <TextField source="parameter_db_name" />
                 <TextField source="serial_number" />
                 <TextField source="model" />
-
-                <DateField
-                    label="Installed on"
-                    source="installed_on"
-                    sortable={false}
-                    showTime={true}
-                />
                 <DateField
                     label="Last Updated"
                     source="calibrated_on"
@@ -52,4 +44,4 @@ const StationDeviceShow = () => {
 };
 
 
-export default StationDeviceShow;
+export default SensorShow;

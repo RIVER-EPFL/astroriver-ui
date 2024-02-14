@@ -6,32 +6,23 @@ import {
     SimpleForm,
     TextField,
     TextInput,
+    NumberInput,
     required,
-    FileInput,
-    FileField,
     ReferenceInput,
     SelectInput,
-    useDataProvider,
-    SaveButton,
-    Toolbar,
-    useNotify,
-    useRedirect,
-    DeleteButton,
-    useRecordContext,
-    useSaveContext,
-    SaveContextProvider,
+
 } from 'react-admin';
 
 
-const SensorCreate = () => {
+const StationCreate = () => {
 
     return (
         <Create redirect="list">
             <SimpleForm >
                 <TextField source="id" />
-                <TextInput source="name" validate={[required()]} />
-                <TextInput source="description" />
-                <TextInput source="comment" />
+                <TextInput source="name" label="Station name" validate={[required()]} />
+                <TextInput source="acronym" label="Station acronym" />
+                <TextInput source="catchment_name" label="Catchment name" />
                 <ReferenceInput
                     source="associated_astrocast_device"
                     reference="astrocast_devices"
@@ -43,9 +34,12 @@ const SensorCreate = () => {
                         validate={required()}
                     />
                 </ReferenceInput>
+                <TextInput source="description" multiline />
+                <NumberInput source="x_coordinate" label="X coordinate" />
+                <NumberInput source="y_coordinate" label="Y coordinate" />
             </SimpleForm>
         </Create>
     )
 };
 
-export default SensorCreate;
+export default StationCreate;

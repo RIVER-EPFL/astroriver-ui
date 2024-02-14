@@ -2,16 +2,14 @@ import {
     List,
     Datagrid,
     TextField,
-    ReferenceField,
     usePermissions,
     TopToolbar,
     CreateButton,
     ExportButton,
-    FunctionField,
     DateField,
 } from "react-admin";
 import Brightness1TwoToneIcon from '@mui/icons-material/Brightness1TwoTone';
-const StationListActions = () => {
+const SensorListActions = () => {
     const { permissions } = usePermissions();
     return (
         <TopToolbar>
@@ -21,7 +19,7 @@ const StationListActions = () => {
     );
 }
 
-const StationList = () => {
+const SensorList = () => {
     const { permissions } = usePermissions();
 
     // Set to green icon
@@ -31,30 +29,22 @@ const StationList = () => {
 
     return (
         <List disableSyncWithLocation
-            actions={<StationListActions />}
+            actions={<SensorListActions />}
             perPage={25}
         >
             <Datagrid
                 bulkActionButtons={permissions === 'admin' ? true : false}
                 rowClick="show"
             >
-                <TextField source="name" />
-                <ReferenceField
-                    label="Astrocast Device"
-                    source="associated_astrocast_device"
-                    reference="astrocast_devices"
-                    link="show"
-                >
-                    <FunctionField
-                        label="Active"
-                        render={(record) => `${record.name} (${record.deviceTypeName})`}
-
-                    />
-                </ReferenceField>
-
+                <TextField source="parameter_name" />
+                <TextField source="parameter_acronym" />
+                <TextField source="parameter_unit" />
+                <TextField source="parameter_db_name" />
+                <TextField source="serial_number" />
+                <TextField source="model" />
                 <DateField
-                    label="Time added (UTC)"
-                    source="time_added_utc"
+                    label="Last Updated"
+                    source="calibrated_on"
                     sortable={false}
                     showTime={true}
                 />
@@ -64,4 +54,4 @@ const StationList = () => {
     )
 };
 
-export default StationList;
+export default SensorList;
