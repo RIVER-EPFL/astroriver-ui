@@ -18,6 +18,19 @@ const StationSensorCreate = () => {
             <SimpleForm >
                 <TextField source="id" />
                 <ReferenceInput
+                    source="sensor_id"
+                    reference="sensors"
+                    filter={{ station_link: false }}
+                >
+                    <SelectInput
+                        label="Sensor"
+                        source="sensor_id"
+                        optionText={(record) => `${record.parameter_db_name} (${record.model}:${record.serial_number})`}
+                        validate={required()}
+
+                    />
+                </ReferenceInput>
+                <ReferenceInput
                     source="station_id"
                     reference="stations"
                 >
@@ -25,17 +38,6 @@ const StationSensorCreate = () => {
                         label="Station"
                         source="station_id"
                         optionText={(record) => `${record.name} (${record.acronym})`}
-                        validate={required()}
-                    />
-                </ReferenceInput>
-                <ReferenceInput
-                    source="sensor_id"
-                    reference="sensors"
-                >
-                    <SelectInput
-                        label="Sensor"
-                        source="sensor_id"
-                        optionText={(record) => `${record.parameter_db_name} (${record.model}:${record.serial_number})`}
                         validate={required()}
                     />
                 </ReferenceInput>
@@ -61,7 +63,11 @@ const StationSensorCreate = () => {
                         { id: '15', name: '15' },
                     ]}
                 />
-                <DateTimeInput source="installed_on" validate={[required()]} />
+                <DateTimeInput
+                    source="installed_on"
+                    validate={[required()]}
+                    defaultValue={new Date()}
+                />
             </SimpleForm>
         </Create>
     )

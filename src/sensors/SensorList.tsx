@@ -7,6 +7,8 @@ import {
     CreateButton,
     ExportButton,
     DateField,
+    ReferenceField,
+    FunctionField,
 } from "react-admin";
 import Brightness1TwoToneIcon from '@mui/icons-material/Brightness1TwoTone';
 const SensorListActions = () => {
@@ -42,6 +44,20 @@ const SensorList = () => {
                 <TextField source="parameter_db_name" />
                 <TextField source="serial_number" />
                 <TextField source="model" />
+                <ReferenceField
+                    label="Assigned Station"
+                    source="station_link.station_id"
+                    reference="stations"
+                    link="show"
+                    emptyText="N/A"
+                    sortable={false}
+                >
+                    <FunctionField
+                        label="Active"
+                        render={(record) => `${record.name} (${record.deviceTypeName})`}
+
+                    />
+                </ReferenceField>
                 <DateField
                     label="Last Updated"
                     source="calibrated_on"

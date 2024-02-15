@@ -13,12 +13,12 @@ const SensorEdit = () => {
             <SimpleForm>
                 <TextInput disabled label="Id" source="id" />
                 <TextInput source="parameter_name" validate={[required()]} />
-                <TextInput source="parameter_acronym" />
-                <TextInput source="parameter_unit" />
-                <TextInput source="parameter_db_name" />
-                <TextInput source="serial_number" />
-                <TextInput source="model" />
-                <DateTimeInput source="calibrated_on" />
+                <TextInput source="parameter_acronym" validate={[required()]} />
+                <TextInput source="parameter_unit" validate={[required()]} />
+                <TextInput source="parameter_db_name" validate={[required()]} />
+                <TextInput source="serial_number" validate={[required()]} />
+                <TextInput source="model" validate={[required()]} />
+                <DateTimeInput source="calibrated_on" validate={[required()]} />
             </SimpleForm>
         </Edit>
     )
