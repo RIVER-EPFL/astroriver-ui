@@ -9,6 +9,7 @@ import {
     DateField,
     ReferenceField,
     FunctionField,
+    NumberField,
 } from "react-admin";
 import Brightness1TwoToneIcon from '@mui/icons-material/Brightness1TwoTone';
 const SensorListActions = () => {
@@ -64,6 +65,10 @@ const SensorList = () => {
                     sortable={false}
                     showTime={true}
                 />
+                <NumberField source="slope" />
+                <NumberField source="intercept" />
+                <NumberField source="min_range" />
+                <NumberField source="max_range" />
             </Datagrid>
         </List >
 

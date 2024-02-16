@@ -5,6 +5,7 @@ import {
     TextInput,
     required,
     DateTimeInput,
+    NumberInput,
 } from 'react-admin';
 
 const SensorEdit = () => {
@@ -19,6 +20,10 @@ const SensorEdit = () => {
                 <TextInput source="serial_number" validate={[required()]} />
                 <TextInput source="model" validate={[required()]} />
                 <DateTimeInput source="calibrated_on" validate={[required()]} />
+                <NumberInput source="slope" />
+                <NumberInput source="intercept" />
+                <NumberInput source="min_range" />
+                <NumberInput source="max_range" />
             </SimpleForm>
         </Edit>
     )

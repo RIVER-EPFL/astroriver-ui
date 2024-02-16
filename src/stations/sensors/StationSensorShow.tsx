@@ -8,6 +8,7 @@ import {
     usePermissions,
     DateField,
     useGetRecordId,
+    NumberField,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 
 const SensorShowActions = () => {
@@ -20,21 +21,20 @@ const SensorShowActions = () => {
 }
 
 
-const SensorShow = () => {
+const StationSensorShow = () => {
     const recordId = useGetRecordId();
     console.log("recordId", recordId);
     return (
         <Show actions={<SensorShowActions />}>
             <SimpleShowLayout>
-                <TextField source="parameter_name" />
-                <TextField source="parameter_acronym" />
-                <TextField source="parameter_unit" />
-                <TextField source="parameter_db_name" />
-                <TextField source="serial_number" />
-                <TextField source="model" />
+                <TextField source="station.name" />
+                <NumberField source="sensor_position" />
+                <TextField source="sensor.parameter_name" />
+                <TextField source="sensor.parameter_unit" />
+                <TextField source="sensor.serial_number" />
                 <DateField
-                    label="Last Updated"
-                    source="calibrated_on"
+                    label="Installed on"
+                    source="installed_on"
                     sortable={false}
                     showTime={true}
                 />
@@ -44,4 +44,4 @@ const SensorShow = () => {
 };
 
 
-export default SensorShow;
+export default StationSensorShow;

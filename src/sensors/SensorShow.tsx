@@ -12,6 +12,7 @@ import {
     FunctionField,
     CreateButton,
     useGetOne,
+    NumberField,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 
 const SensorShowActions = () => {
@@ -74,6 +75,12 @@ const SensorShow = () => {
                     sortable={false}
                     showTime={true}
                 />
+                <NumberField source="slope" />
+                <NumberField source="intercept" />
+                <NumberField source="min_range" />
+                <NumberField source="max_range" />
+
+
             </SimpleShowLayout>
         </Show >
     )

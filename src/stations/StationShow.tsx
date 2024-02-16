@@ -22,10 +22,9 @@ import {
     SimpleForm,
     Toolbar,
     SaveButton,
-    WithRecord,
     RecordContextProvider,
-
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
+import Plot from 'react-plotly.js';
 import { Grid } from '@mui/material';
 
 const StationShowActions = () => {
@@ -85,51 +84,130 @@ const CommentCreate = () => {
     );
 }
 
+const HighFrequencyPlot = () => {
+    // Generate 100 data points over 2 years
+    const startDate = new Date('2024-01-01'); // Start date
+    const endDate = new Date('2026-01-01'); // End date
+    const interval = (endDate - startDate) / 99; // Calculate interval between each point
+
+    // Generate time series data with evenly spaced timestamps and random values for demonstration
+    const timeSeriesData = Array.from({ length: 100 }, (_, index) => {
+        const timestamp = new Date(startDate.getTime() + index * interval).toISOString().split('T')[0];
+        const value = Math.random() * 100; // Random value for demonstration
+        return { timestamp, value };
+    });
+
+    // Extract x and y values from time series data
+    const xValues = timeSeriesData.map(dataPoint => dataPoint.timestamp);
+    const yValues = timeSeriesData.map(dataPoint => dataPoint.value);
+
+    return (
+        <Plot
+            data={[
+                {
+                    x: xValues,
+                    y: yValues,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    marker: { color: 'blue' }, // Customize marker color if needed
+                },
+            ]}
+            layout={{
+                width: 1000, height: 400, title: 'Sensor high frequency time series',
+                xaxis: {
+                    rangeselector: {
+                        buttons: [
+                            {
+                                count: 1,
+                                label: '1m',
+                                step: 'month',
+                                stepmode: 'backward'
+                            },
+                            {
+                                count: 6,
+                                label: '6m',
+                                step: 'month',
+                                stepmode: 'backward'
+                            },
+                            { step: 'all' }
+                        ]
+                    },
+                    rangeslider: { range: [startDate, endDate] },
+                    range: ["2024-01-01", "2024-06-01"],
+                    type: 'date'
+                }
+            }}
+
+        />
+    )
+}
 
 const StationSensorDetails = props => {
     // The sensor details layout lives here..!
-
     const recordId = useGetRecordId();
     const { data, isLoading, error } = useGetOne('stations', { id: recordId });
     if (isLoading) return null;
-    console.log('data', data);
 
-    const sensor_link = data.sensor_link.find(link => link.sensor_position == props.sensor_position);
-    console.log("sensor_link", sensor_link);
+    const sensor_link = data.sensor_link.find(
+        link => link.sensor_position == props.sensor_position
+    );
     if (sensor_link) {
-        const sensor = data.sensors.find(sensor => sensor.id === sensor_link.sensor_id);
-        console.log("sensor", sensor);
+        // Get the sensor data for the sensor_link
+        const sensor = data.sensors.find(
+            sensor => sensor.id === sensor_link.sensor_id
+        );
+
+        // Combine sensor and sensor_link data
+        const sensor_all = { sensor: sensor, sensor_link: sensor_link };
         return (
-            <RecordContextProvider value={sensor}>
-                {/* <h1>{defaultTitle}</h1> */}
-                <SimpleShowLayout>
-                    <TextField source="id" label="Currently installed" />
+            <RecordContextProvider value={sensor_all}>
+                <h3>Installed sensor: </h3>
+                <SimpleShowLayout >
+                    <Grid container >
+                        <Grid item xs={4}>
+                            <Labeled>
+                                <TextField
+                                    source="sensor.model"
+                                    label="Sensor model"
+                                />
+                            </Labeled>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Labeled>
+                                <DateField
+                                    label="Install date"
+                                    source="sensor_link.installed_on"
+                                    sortable={false}
+                                    showTime={true}
+                                />
+                            </Labeled>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Labeled>
+                                <DateField
+                                    label="Last calibration date"
+                                    source="sensor.calibrated_on"
+                                    sortable={false}
+                                    showTime={true}
+                                />
+                            </Labeled>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Labeled>
+                                <TextField source="sensor.serial_number" />
+                            </Labeled>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Labeled>
+                                <FunctionField
+                                    label="Current correction eq."
+                                    render={(record) => `y = ${record.sensor.slope}*bytes + ${record.sensor.intercept}`}
+                                />
+                            </Labeled>
+                        </Grid>
+                    </Grid>
 
-                    <TextField source="parameter_name" />
-                    <TextField source="parameter_acronym" />
-                    <TextField source="parameter_unit" />
-                    <TextField source="parameter_db_name" />
-                    <TextField source="serial_number" />
-                    <TextField source="model" />
-                    <ReferenceField
-                        label="Assigned Station"
-                        source="station_link.station_id"
-                        reference="stations"
-                        link="show"
-                        emptyText="N/A"
-                    >
-                        <FunctionField
-                            label="Active"
-                            render={(record) => `${record.name} (${record.deviceTypeName})`}
-
-                        />
-                    </ReferenceField>
-                    <DateField
-                        label="Last Updated"
-                        source="calibrated_on"
-                        sortable={false}
-                        showTime={true}
-                    />
+                    <HighFrequencyPlot />
                 </SimpleShowLayout>
             </RecordContextProvider>
         );
@@ -144,13 +222,19 @@ const StationShow = () => {
     // if (!record) return null;
     console.log("record", record);
     return (
-        <Show actions={<StationShowActions />}>
+        <Show actions={<StationShowActions />} sx={{
+            width: 0.75
+        }}>
 
             <SimpleShowLayout >
                 <FunctionField
                     render={record => `${record.name} (${record.acronym})`}
                     label={false}
-                    sx={{ color: 'text.primary', fontSize: 26, fontWeight: 'bold' }}
+                    sx={{
+                        color: 'text.primary',
+                        fontSize: 26,
+                        fontWeight: 'bold'
+                    }}
                 />
 
                 <Grid container>
@@ -209,23 +293,23 @@ const StationShow = () => {
                 {/* Show the x and y coordinates as strings to avoid commas */}
 
             </SimpleShowLayout>
-            <TabbedShowLayout tabs={<TabbedShowLayoutTabs
-                variant="scrollable"
-                scrollButtons={true}
-                allowScrollButtonsMobile={true}
-            />}
-                sx={{ width: 0.8 }} >
+            <TabbedShowLayout tabs={
+                <TabbedShowLayoutTabs
+                    variant="scrollable"
+                    scrollButtons={true}
+                    allowScrollButtonsMobile={true}
+                />}
+            >
                 {Array.from({ length: 15 }, (_, index) => (
                     <TabbedShowLayout.Tab
                         key={index + 1}
                         label={TabValue(index + 1)}
                         path={`body${index + 1}`}
                     >
-                        <Grid container>
-                            <Grid item xs={6}>
-                                <StationSensorDetails sensor_position={index + 1} />
-                            </Grid>
-                        </Grid>
+
+                        <StationSensorDetails sensor_position={index + 1} />
+
+
                     </TabbedShowLayout.Tab>
                 ))}
             </TabbedShowLayout>
