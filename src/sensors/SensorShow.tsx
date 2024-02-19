@@ -13,6 +13,8 @@ import {
     CreateButton,
     useGetOne,
     NumberField,
+    ArrayField,
+    Datagrid,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 
 const SensorShowActions = () => {
@@ -34,9 +36,6 @@ const SensorShowActions = () => {
                     resource="station_sensors"
                     record={{ id: data.station_link.id }}
                 />}
-
-
-
                 <EditButton />
                 <DeleteButton /></>}
         </TopToolbar >
@@ -75,11 +74,35 @@ const SensorShow = () => {
                     sortable={false}
                     showTime={true}
                 />
-                <NumberField source="slope" />
-                <NumberField source="intercept" />
-                <NumberField source="min_range" />
-                <NumberField source="max_range" />
+                <ArrayField source="calibrations">
+                    <Datagrid
+                        bulkActionButtons={false}
+                        style={{ tableLayout: 'fixed', width: '50%' }}>
+                        <DateField
+                            source="calibrated_on"
+                            label="Calibrated On"
+                            showTime={true}
+                        />
+                        <NumberField
+                            source="intercept"
+                            label="Intercept"
+                        />
+                        <NumberField
+                            source="slope"
+                            label="Slope"
+                        />
+                        <NumberField
+                            source="min_range"
+                            label="Min Range"
+                        />
+                        <NumberField
+                            source="max_range"
+                            label="Max Range"
+                        />
 
+
+                    </Datagrid>
+                </ArrayField>
 
             </SimpleShowLayout>
         </Show >

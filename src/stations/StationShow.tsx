@@ -23,6 +23,9 @@ import {
     Toolbar,
     SaveButton,
     RecordContextProvider,
+    ArrayField,
+    Datagrid,
+    NumberField,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 import Plot from 'react-plotly.js';
 import { Grid } from '@mui/material';
@@ -59,30 +62,6 @@ export const MyToolbar = () => (
         <SaveButton label="Update" />
     </Toolbar>
 );
-
-
-const CommentCreate = () => {
-    const filterToQuery = searchText => ({ name_ilike: `%${searchText}%` });
-    const recordId = useGetRecordId();
-
-    return (
-        <Edit actions={false}>
-            <SimpleForm toolbar={<MyToolbar />} >
-                <ReferenceInput
-                    source="station_id"
-                    reference="station_sensors"
-                >
-                    <SelectInput
-                        label="Astrocast Device"
-                        source="associated_astrocast_device"
-                        optionText={(record) => `${record.name} (${record.deviceTypeName})`}
-                        validate={required()}
-                    />
-                </ReferenceInput>
-            </SimpleForm>
-        </Edit>
-    );
-}
 
 const HighFrequencyPlot = () => {
     // Generate 100 data points over 2 years
@@ -148,72 +127,107 @@ const StationSensorDetails = props => {
     const { data, isLoading, error } = useGetOne('stations', { id: recordId });
     if (isLoading) return null;
 
-    const sensor_link = data.sensor_link.find(
-        link => link.sensor_position == props.sensor_position
+    // const sensor_link = data.sensor_link.find(
+    //     link => link.sensor_position == props.sensor_position
+    // );
+    // if (sensor_link) {
+    // Get the sensor data for the sensor_link
+
+    // Search the sensor array, for the station_link that matches props sensor_position
+    console.log("Data", data);
+    const sensor = data.sensors.find(
+        sensor => sensor.station_link.sensor_position == props.sensor_position
     );
-    if (sensor_link) {
-        // Get the sensor data for the sensor_link
-        const sensor = data.sensors.find(
-            sensor => sensor.id === sensor_link.sensor_id
-        );
+    console.log("Sensor", sensor);
+    // // Combine sensor and sensor_link data
+    // const sensor_all = { sensor: sensor, sensor_link: sensor_link };
 
-        // Combine sensor and sensor_link data
-        const sensor_all = { sensor: sensor, sensor_link: sensor_link };
-        return (
-            <RecordContextProvider value={sensor_all}>
-                <h3>Installed sensor: </h3>
-                <SimpleShowLayout >
-                    <Grid container >
-                        <Grid item xs={4}>
-                            <Labeled>
-                                <TextField
-                                    source="sensor.model"
-                                    label="Sensor model"
-                                />
-                            </Labeled>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Labeled>
-                                <DateField
-                                    label="Install date"
-                                    source="sensor_link.installed_on"
-                                    sortable={false}
-                                    showTime={true}
-                                />
-                            </Labeled>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Labeled>
-                                <DateField
-                                    label="Last calibration date"
-                                    source="sensor.calibrated_on"
-                                    sortable={false}
-                                    showTime={true}
-                                />
-                            </Labeled>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Labeled>
-                                <TextField source="sensor.serial_number" />
-                            </Labeled>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Labeled>
-                                <FunctionField
-                                    label="Current correction eq."
-                                    render={(record) => `y = ${record.sensor.slope}*bytes + ${record.sensor.intercept}`}
-                                />
-                            </Labeled>
-                        </Grid>
+    return (
+        <RecordContextProvider value={sensor}>
+            <h3>Installed sensor: </h3>
+            <SimpleShowLayout >
+                <Grid container >
+                    <Grid item xs={4}>
+                        <Labeled>
+                            <TextField
+                                source="model"
+                                label="Sensor model"
+                            />
+                        </Labeled>
                     </Grid>
+                    <Grid item xs={4}>
+                        <Labeled>
+                            <DateField
+                                label="Install date"
+                                source="station_link.installed_on"
+                                sortable={false}
+                                showTime={true}
+                            />
+                        </Labeled>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Labeled>
+                            <DateField // Assumes list is sorted by date
+                                label="Last calibration date"
+                                source="calibrations[0].calibrated_on"
+                                sortable={false}
+                                showTime={true}
+                            />
+                        </Labeled>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Labeled>
+                            <TextField source="serial_number" />
+                        </Labeled>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Labeled>
+                            <FunctionField
+                                label="Current correction eq."
+                                render={(record) => `y = ${record.slope}*bytes + ${record.intercept}`}
+                            />
+                        </Labeled>
+                    </Grid>
+                </Grid>
+                <ArrayField source="calibrations">
+                    <Datagrid
+                        bulkActionButtons={false}
+                        style={{ tableLayout: 'fixed', width: '100%' }}>
+                        <DateField
+                            source="calibrated_on"
+                            label="Calibrated On"
+                            showTime={true}
+                            sortable={false}
+                        />
+                        <NumberField
+                            source="intercept"
+                            label="Intercept"
+                            sortable={false}
+                        />
+                        <NumberField
+                            source="slope"
+                            label="Slope"
+                            sortable={false}
+                        />
+                        <NumberField
+                            source="min_range"
+                            label="Min Range"
+                            sortable={false}
+                        />
+                        <NumberField
+                            source="max_range"
+                            label="Max Range"
+                            sortable={false}
+                        />
 
-                    <HighFrequencyPlot />
-                </SimpleShowLayout>
-            </RecordContextProvider>
-        );
-    } else {
-        return null;
-    }
+
+                    </Datagrid>
+                </ArrayField>
+                <HighFrequencyPlot />
+            </SimpleShowLayout>
+        </RecordContextProvider>
+    );
+
 }
 
 
