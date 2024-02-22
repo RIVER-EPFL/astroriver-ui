@@ -3,11 +3,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
     Admin,
     Resource,
-    CustomRoutes,
     AuthProvider,
     DataProvider,
-    AppBar,
-    TitlePortal,
 } from 'react-admin';
 import { Route } from 'react-router-dom';
 import simpleRestProvider from 'ra-data-simple-rest';
@@ -22,11 +19,8 @@ import i18nProvider from './i18nProvider';
 import Layout from './Layout';
 import users from './users';
 import sensors from './sensors';
-import data from "./data";
 import stations from './stations';
 import axios from 'axios';
-import addUploadCapabilities from './addUploadFeature'
-import SensorDataShow from './sensors/SensorDataShow';
 const initOptions: KeycloakInitOptions = { onLoad: 'login-required' };
 
 const getPermissions = (decoded: KeycloakTokenParsed) => {

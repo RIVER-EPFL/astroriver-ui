@@ -10,6 +10,9 @@ import {
     ReferenceField,
     FunctionField,
     NumberField,
+    WrapperField,
+    useRecordContext,
+    useGetOne,
 } from "react-admin";
 import Brightness1TwoToneIcon from '@mui/icons-material/Brightness1TwoTone';
 const SensorListActions = () => {
@@ -21,6 +24,7 @@ const SensorListActions = () => {
         </TopToolbar>
     );
 }
+
 
 const SensorList = () => {
     const { permissions } = usePermissions();
@@ -39,10 +43,7 @@ const SensorList = () => {
                 bulkActionButtons={permissions === 'admin' ? true : false}
                 rowClick="show"
             >
-                <TextField source="parameter_name" />
-                <TextField source="parameter_acronym" />
-                <TextField source="parameter_unit" />
-                <TextField source="parameter_db_name" />
+                <FunctionField label="Parameter" render={(record) => `${record.parameter_name} (${record.parameter_acronym})`} />
                 <TextField source="serial_number" />
                 <TextField source="model" />
                 <ReferenceField
@@ -53,22 +54,16 @@ const SensorList = () => {
                     emptyText="N/A"
                     sortable={false}
                 >
-                    <FunctionField
-                        label="Active"
-                        render={(record) => `${record.name} (${record.deviceTypeName})`}
-
-                    />
-                </ReferenceField>
+                    <TextField source="name" />
+                </ReferenceField>;
                 <DateField
-                    label="Last Updated"
-                    source="calibrated_on"
+                    label="Last calibrated"
+                    source="calibrations[0].calibrated_on"
                     sortable={false}
                     showTime={true}
                 />
-                <NumberField source="slope" />
-                <NumberField source="intercept" />
-                <NumberField source="min_range" />
-                <NumberField source="max_range" />
+
+
             </Datagrid>
         </List >
 

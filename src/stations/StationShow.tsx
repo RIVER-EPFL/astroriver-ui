@@ -57,11 +57,6 @@ const TabValue = (id: number) => {
 
 }
 
-export const MyToolbar = () => (
-    <Toolbar>
-        <SaveButton label="Update" />
-    </Toolbar>
-);
 
 const HighFrequencyPlot = () => {
     // Generate 100 data points over 2 years
@@ -127,20 +122,10 @@ const StationSensorDetails = props => {
     const { data, isLoading, error } = useGetOne('stations', { id: recordId });
     if (isLoading) return null;
 
-    // const sensor_link = data.sensor_link.find(
-    //     link => link.sensor_position == props.sensor_position
-    // );
-    // if (sensor_link) {
-    // Get the sensor data for the sensor_link
-
     // Search the sensor array, for the station_link that matches props sensor_position
-    console.log("Data", data);
     const sensor = data.sensors.find(
         sensor => sensor.station_link.sensor_position == props.sensor_position
     );
-    console.log("Sensor", sensor);
-    // // Combine sensor and sensor_link data
-    // const sensor_all = { sensor: sensor, sensor_link: sensor_link };
 
     return (
         <RecordContextProvider value={sensor}>
@@ -233,8 +218,7 @@ const StationSensorDetails = props => {
 
 const StationShow = () => {
     const record = useRecordContext();
-    // if (!record) return null;
-    console.log("record", record);
+
     return (
         <Show actions={<StationShowActions />} sx={{
             width: 0.75

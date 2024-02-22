@@ -8,13 +8,28 @@ import {
     required,
     ReferenceInput,
     SelectInput,
+    useRedirect,
 } from 'react-admin';
+
+const AvailableSensorPositions = () => {
+    // Get the sensor positions already taken by checking sensor_link on
+
+    const positions = [];
+    for (let i = 1; i <= 15; i++) {
+        positions.push({ id: i, name: i });
+    }
+    return positions;
+}
 
 
 const StationSensorCreate = () => {
 
+    const redirect = useRedirect();
+    const onSuccess = (record) => {
+        redirect(`/stations/${record.station_id}/show/body${record.sensor_position}`);
+    }
     return (
-        <Create redirect="list">
+        <Create mutationOptions={{ onSuccess }}>
             <SimpleForm >
                 <TextField source="id" />
                 <ReferenceInput

@@ -64,7 +64,7 @@ const SensorShow = () => {
                 >
                     <FunctionField
                         label="Active"
-                        render={(record) => `${record.name} (${record.deviceTypeName})`}
+                        render={(record) => `${record.name}`}
 
                     />
                 </ReferenceField>
