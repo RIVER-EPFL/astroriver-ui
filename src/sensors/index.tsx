@@ -13,8 +13,16 @@ import SensorEdit from './SensorEdit';
 import SensorList from './SensorList';
 import SensorShow from './SensorShow';
 
+import SensorParameterCreate from './parameters/SensorParameterCreate';
+import SensorParameterEdit from './parameters/SensorParameterEdit';
+import SensorParameterList from './parameters/SensorParameterList';
+import SensorParameterShow from './parameters/SensorParameterShow';
+
 const parameters = {
-    list: NothingList,
+    list: SensorParameterList,
+    show: SensorParameterShow,
+    edit: SensorParameterEdit,
+    create: SensorParameterCreate,
     options: {
         label: 'Sensor Parameters',
     },

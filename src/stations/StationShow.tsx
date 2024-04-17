@@ -26,6 +26,7 @@ import {
     ArrayField,
     Datagrid,
     NumberField,
+    CreateButton,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 import Plot from 'react-plotly.js';
 import { Grid } from '@mui/material';
@@ -126,6 +127,32 @@ const StationSensorDetails = props => {
     const sensor = data.sensors.find(
         sensor => sensor.station_link.sensor_position == props.sensor_position
     );
+
+    const SensorShowActions = () => {
+        const { permissions } = usePermissions();
+        const sensorId = useGetRecordId();
+        const { data, isLoading, error } = useGetOne('sensors', { id: sensorId });
+        if (isLoading) return null;
+        console.log('data', data);
+        return (
+            <TopToolbar>
+                {permissions === 'admin' && <>
+                    {data.station_link === null && <CreateButton
+                        label="Assign to Station"
+                        resource="station_sensors"
+                        state={{ record: { sensor_id: sensorId } }}
+                    />}
+                    {data.station_link !== null && <EditButton
+                        label="Manage station assignment"
+                        resource="station_sensors"
+                        record={{ id: data.station_link.id }}
+                    />}
+                    <EditButton />
+                    <DeleteButton /></>}
+            </TopToolbar >
+        );
+    }
+
 
     return (
         <RecordContextProvider value={sensor}>
