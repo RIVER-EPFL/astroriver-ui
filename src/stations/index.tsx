@@ -22,7 +22,7 @@ const stations = {
         label: 'Stations',
     },
     icon: FactoryIcon,
-    recordRepresentation: (record) => `: ${record.name} (${record.acronym}) - ${record.catchment_name}`
+    recordRepresentation: (record) => `${record.name} (${record.acronym}) - ${record.catchment_name}`
 };
 
 const sensors = {

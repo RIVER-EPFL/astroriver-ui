@@ -43,9 +43,18 @@ const SensorList = () => {
                 bulkActionButtons={permissions === 'admin' ? true : false}
                 rowClick="show"
             >
-                <FunctionField label="Parameter" render={(record) => `${record.parameter_name} (${record.parameter_acronym})`} />
-                <TextField source="serial_number" />
                 <TextField source="model" />
+                <ReferenceField
+                    label="Parameter"
+                    source="parameter_id"
+                    reference="sensor_parameters"
+                    link="show"
+                    emptyText="N/A"
+                    sortable={false}
+                >
+                    <FunctionField render={(record) => `${record.name} (${record.unit})`} />
+                </ReferenceField>
+                <TextField source="serial_number" />
                 <ReferenceField
                     label="Assigned Station"
                     source="station_link.station_id"
@@ -55,7 +64,7 @@ const SensorList = () => {
                     sortable={false}
                 >
                     <TextField source="name" />
-                </ReferenceField>;
+                </ReferenceField>
                 <DateField
                     label="Last calibrated"
                     source="calibrations[0].calibrated_on"

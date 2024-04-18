@@ -6,6 +6,9 @@ import {
     required,
     DateTimeInput,
     NumberInput,
+    ReferenceInput,
+    SelectInput,
+    TextField,
 } from 'react-admin';
 
 const SensorEdit = () => {
@@ -13,17 +16,24 @@ const SensorEdit = () => {
         <Edit>
             <SimpleForm>
                 <TextInput disabled label="Id" source="id" />
-                <TextInput source="parameter_name" validate={[required()]} />
-                <TextInput source="parameter_acronym" validate={[required()]} />
-                <TextInput source="parameter_unit" validate={[required()]} />
-                <TextInput source="parameter_db_name" validate={[required()]} />
+                <ReferenceInput
+                    source="parameter_id"
+                    reference="sensor_parameters"
+                >
+                    <SelectInput
+                        label="Parameter"
+                        source="parameter_id"
+                        optionText={(record) => `${record.name} (${record.unit})`}
+                        validate={required()}
+                    />
+                </ReferenceInput>
                 <TextInput source="serial_number" validate={[required()]} />
                 <TextInput source="model" validate={[required()]} />
-                <DateTimeInput source="calibrated_on" validate={[required()]} />
-                <NumberInput source="slope" />
+                {/* <DateTimeInput source="calibrated_on" validate={[required()]} /> */}
+                {/* <NumberInput source="slope" />
                 <NumberInput source="intercept" />
                 <NumberInput source="min_range" />
-                <NumberInput source="max_range" />
+                <NumberInput source="max_range" /> */}
             </SimpleForm>
         </Edit>
     )

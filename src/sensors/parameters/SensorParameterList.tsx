@@ -8,6 +8,7 @@ import {
     ExportButton,
     DateField,
     NumberField,
+    ReferenceManyCount,
 } from "react-admin";
 import Brightness1TwoToneIcon from '@mui/icons-material/Brightness1TwoTone';
 const SensorParameterListActions = () => {
@@ -37,17 +38,10 @@ const SensorParameterList = () => {
                 bulkActionButtons={permissions === 'admin' ? true : false}
                 rowClick="show"
             >
-                <TextField source="station.name" />
-                <NumberField source="sensor_position" />
-                <TextField source="sensor.parameter_name" />
-                <TextField source="sensor.parameter_unit" />
-                <TextField source="sensor.serial_number" />
-                <DateField
-                    label="Installed on"
-                    source="installed_on"
-                    sortable={false}
-                    showTime={true}
-                />
+                <TextField source="name" />
+                <TextField source="acronym" />
+                <TextField source="unit" />
+                <ReferenceManyCount reference="sensors" target="parameter_id" label="Count of sensors" link />
             </Datagrid>
         </List >
 
