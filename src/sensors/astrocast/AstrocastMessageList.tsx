@@ -50,6 +50,11 @@ const AtrocastMessageList = () => {
                 bulkActionButtons={permissions === 'admin' ? true : false}
                 rowClick="show"
             >
+                <DateField
+                    label="Created Date"
+                    source="createdDate"
+                    showTime={true}
+                />
                 <TextField source="decoded_data" sortable={false} />
                 <NumberField source="messageSize" />
                 <ReferenceField
@@ -64,14 +69,6 @@ const AtrocastMessageList = () => {
 
                     />
                 </ReferenceField>
-                <NumberField source="latitude" />
-                <NumberField source="longitude" />
-                <DateField
-                    label="Created Date"
-                    source="createdDate"
-                    // sortable={false}
-                    showTime={true}
-                />
             </Datagrid>
         </List >
 

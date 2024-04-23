@@ -49,12 +49,18 @@ const SensorShow = () => {
     return (
         <Show actions={<SensorShowActions />}>
             <SimpleShowLayout>
-                <TextField source="parameter_name" />
-                <TextField source="parameter_acronym" />
-                <TextField source="parameter_unit" />
-                <TextField source="parameter_db_name" />
-                <TextField source="serial_number" />
                 <TextField source="model" />
+                <TextField source="serial_number" />
+                <ReferenceField
+                    label="Parameter"
+                    source="parameter_id"
+                    reference="sensor_parameters"
+                    link="show"
+                    emptyText="N/A"
+                    sortable={false}
+                >
+                    <FunctionField render={(record) => `${record.name} (${record.unit})`} />
+                </ReferenceField>
                 <ReferenceField
                     label="Assigned Station"
                     source="station_link.station_id"

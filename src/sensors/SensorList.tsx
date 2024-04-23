@@ -71,8 +71,6 @@ const SensorList = () => {
                     sortable={false}
                     showTime={true}
                 />
-
-
             </Datagrid>
         </List >
 

@@ -7,12 +7,22 @@ import {
     DateTimeInput,
     ReferenceInput,
     SelectInput,
+    Toolbar,
+    SaveButton,
 } from 'react-admin';
+
+
+const EditToolbar = () => (
+    <Toolbar>
+        <SaveButton alwaysEnable />
+    </Toolbar>
+);
+
 
 const SensorEdit = () => {
     return (
         <Edit>
-            <SimpleForm>
+            <SimpleForm toolbar={<EditToolbar />}>
                 <TextInput disabled label="Id" source="id" />
                 <ReferenceInput
                     source="sensor_id"
@@ -21,8 +31,9 @@ const SensorEdit = () => {
                     <SelectInput
                         label="Sensor"
                         source="sensor_id"
-                        optionText={(record) => `${record.parameter_db_name} (${record.model}:${record.serial_number})`}
+                        optionText={(record) => `${record.model}:${record.serial_number} (${record.parameter.name})`}
                         validate={required()}
+                    // helperText="Sensors already attached to a station are not listed. Remove them from the station first."
                     />
                 </ReferenceInput>
                 <ReferenceInput

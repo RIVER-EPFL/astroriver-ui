@@ -9,6 +9,8 @@ import {
     DateField,
     useGetRecordId,
     NumberField,
+    FunctionField,
+    ReferenceField,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 
 const SensorShowActions = () => {
@@ -27,10 +29,28 @@ const StationSensorShow = () => {
     return (
         <Show actions={<SensorShowActions />}>
             <SimpleShowLayout>
-                <TextField source="station.name" />
+                <ReferenceField
+                    label="Station"
+                    source="station_id"
+                    reference="stations"
+                    link="show"
+                    emptyText="N/A"
+                    sortable={false}
+                >
+                    <TextField source="name" />
+
+                </ReferenceField>
                 <NumberField source="sensor_position" />
-                <TextField source="sensor.parameter_name" />
-                <TextField source="sensor.parameter_unit" />
+                <ReferenceField
+                    label="Parameter"
+                    source="sensor.parameter_id"
+                    reference="sensor_parameters"
+                    link="show"
+                    emptyText="N/A"
+                    sortable={false}
+                >
+                    <FunctionField render={(record) => `${record.name} (${record.unit})`} />
+                </ReferenceField>
                 <TextField source="sensor.serial_number" />
                 <DateField
                     label="Installed on"

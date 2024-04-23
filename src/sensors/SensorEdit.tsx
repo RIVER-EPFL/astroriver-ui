@@ -9,11 +9,14 @@ import {
     ReferenceInput,
     SelectInput,
     TextField,
+    ArrayInput,
+    SimpleFormIterator,
+    useRecordContext,
 } from 'react-admin';
 
 const SensorEdit = () => {
     return (
-        <Edit>
+        <Edit redirect="show">
             <SimpleForm>
                 <TextInput disabled label="Id" source="id" />
                 <ReferenceInput
@@ -29,11 +32,15 @@ const SensorEdit = () => {
                 </ReferenceInput>
                 <TextInput source="serial_number" validate={[required()]} />
                 <TextInput source="model" validate={[required()]} />
-                {/* <DateTimeInput source="calibrated_on" validate={[required()]} /> */}
-                {/* <NumberInput source="slope" />
-                <NumberInput source="intercept" />
-                <NumberInput source="min_range" />
-                <NumberInput source="max_range" /> */}
+                <ArrayInput source="calibrations">
+                    <SimpleFormIterator inline>
+                        <DateTimeInput source="calibrated_on" validate={[required()]} />
+                        <NumberInput source="slope" validate={[required()]} />
+                        <NumberInput source="intercept" validate={[required()]} />
+                        <NumberInput source="min_range" validate={[required()]} />
+                        <NumberInput source="max_range" validate={[required()]} />
+                    </SimpleFormIterator>
+                </ArrayInput>
             </SimpleForm>
         </Edit>
     )

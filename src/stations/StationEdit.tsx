@@ -16,7 +16,7 @@ import {
 
 const StationEdit = () => {
     return (
-        <Edit>
+        <Edit redirect="show">
             <SimpleForm>
                 <TextInput disabled label="Id" source="id" />
                 <TextInput source="name" label="Station name" />

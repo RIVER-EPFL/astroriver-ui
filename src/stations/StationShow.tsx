@@ -10,26 +10,25 @@ import {
     DateField,
     FunctionField,
     TabbedShowLayout,
-    ReferenceInput,
-    SelectInput,
-    required,
     Labeled,
     useGetRecordId,
     useRecordContext,
     TabbedShowLayoutTabs,
     useGetOne,
-    Edit,
-    SimpleForm,
-    Toolbar,
-    SaveButton,
     RecordContextProvider,
     ArrayField,
     Datagrid,
     NumberField,
     CreateButton,
+    useRedirect,
+    useRefresh,
+    useNotify,
+    useDelete,
+    Button,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 import Plot from 'react-plotly.js';
 import { Grid } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const StationShowActions = () => {
     const { permissions } = usePermissions();
@@ -40,7 +39,7 @@ const StationShowActions = () => {
     );
 }
 
-const TabValue = (id: number) => {
+const tabValue = (id: number) => {
     const recordId = useGetRecordId();
     const { data, isLoading, error } = useGetOne('stations', { id: recordId });
     if (isLoading) return null;
@@ -50,8 +49,8 @@ const TabValue = (id: number) => {
     const sensor_link = data.sensor_link.find(link => link.sensor_position == id);
     if (sensor_link) {
         const sensor = data.sensors.find(sensor => sensor.id === sensor_link.sensor_id);
-        if (sensor) {
-            return `${id}: ${sensor.parameter_acronym}`;
+        if (sensor.parameter) {
+            return `${id}: ${sensor.parameter.name}`;
         }
     }
     return `${id}: N/A`;
@@ -128,29 +127,10 @@ const StationSensorDetails = props => {
         sensor => sensor.station_link.sensor_position == props.sensor_position
     );
 
-    const SensorShowActions = () => {
-        const { permissions } = usePermissions();
-        const sensorId = useGetRecordId();
-        const { data, isLoading, error } = useGetOne('sensors', { id: sensorId });
-        if (isLoading) return null;
-        console.log('data', data);
-        return (
-            <TopToolbar>
-                {permissions === 'admin' && <>
-                    {data.station_link === null && <CreateButton
-                        label="Assign to Station"
-                        resource="station_sensors"
-                        state={{ record: { sensor_id: sensorId } }}
-                    />}
-                    {data.station_link !== null && <EditButton
-                        label="Manage station assignment"
-                        resource="station_sensors"
-                        record={{ id: data.station_link.id }}
-                    />}
-                    <EditButton />
-                    <DeleteButton /></>}
-            </TopToolbar >
-        );
+    const currentCorrectionEq = (record) => {
+        console.log(record);
+        if (record.calibrations.length === 0) return 'N/A';
+        return `y = ${record.calibrations[0].slope}*bytes + ${record.calibrations[0].intercept}`;
     }
 
 
@@ -184,6 +164,7 @@ const StationSensorDetails = props => {
                                 source="calibrations[0].calibrated_on"
                                 sortable={false}
                                 showTime={true}
+                                emptyText='Never calibrated'
                             />
                         </Labeled>
                     </Grid>
@@ -196,7 +177,7 @@ const StationSensorDetails = props => {
                         <Labeled>
                             <FunctionField
                                 label="Current correction eq."
-                                render={(record) => `y = ${record.slope}*bytes + ${record.intercept}`}
+                                render={currentCorrectionEq}
                             />
                         </Labeled>
                     </Grid>
@@ -241,11 +222,69 @@ const StationSensorDetails = props => {
     );
 
 }
+const ModifySensorAssignment = (props) => {
+    const record = useRecordContext();
+    const { permissions } = usePermissions();
+    const refresh = useRefresh();
+    // Get the station_sensor link from the record.sensor_link array. If it
+    // is null, there is no sensor assigned to this station position.
+    const sensor_link = record.sensor_link.find(
+        link => link.sensor_position == props.sensor_position
+    );
 
+
+    const DeleteAssignmentButton = () => {
+        const refresh = useRefresh();
+        const record = useRecordContext();
+        const notify = useNotify();
+        const [deleteOne, { isLoading }] = useDelete(
+            'station_sensors',
+            { id: sensor_link.id },
+            {
+                onSuccess: (data) => {
+                    refresh();
+                    notify('Assignment deleted');
+                },
+                onError: (error) => {
+                    notify(`Assignment deletion error: ${error.message}`, { type: 'error' });
+                },
+            }
+        );
+
+        return <><Button label="Remove Assignment" startIcon={<ClearIcon fontSize='inherit' />} onClick={() => deleteOne()} disabled={isLoading} /></>;
+    };
+
+    if (sensor_link === undefined) {
+        return (
+            <TopToolbar>
+                {permissions === 'admin' && <CreateButton
+                    label="Assign sensor"
+                    resource="station_sensors"
+                    state={{
+                        record: {
+                            station_id: record.id,
+                            sensor_position: props.sensor_position
+                        }
+                    }}
+                />}
+            </TopToolbar>
+        );
+    } else {
+        return (
+            <TopToolbar>
+                {permissions === 'admin' && <><EditButton
+                    label="Manage sensor assignment"
+                    resource="station_sensors"
+                    record={{ id: sensor_link.id }}
+                /><DeleteAssignmentButton /></>}
+            </TopToolbar>
+
+        );
+    }
+
+}
 
 const StationShow = () => {
-    const record = useRecordContext();
-
     return (
         <Show actions={<StationShowActions />} sx={{
             width: 0.75
@@ -312,31 +351,29 @@ const StationShow = () => {
                             />
                         </Labeled>
                     </Grid>
-
                 </Grid>
 
-                {/* Show the x and y coordinates as strings to avoid commas */}
-
             </SimpleShowLayout>
-            <TabbedShowLayout tabs={
-                <TabbedShowLayoutTabs
-                    variant="scrollable"
-                    scrollButtons={true}
-                    allowScrollButtonsMobile={true}
-                />}
+            <TabbedShowLayout
+                tabs={
+                    <TabbedShowLayoutTabs
+                        variant="scrollable"
+                        scrollButtons={true}
+                        allowScrollButtonsMobile={true}
+                    />}
             >
-                {Array.from({ length: 15 }, (_, index) => (
-                    <TabbedShowLayout.Tab
-                        key={index + 1}
-                        label={TabValue(index + 1)}
-                        path={`body${index + 1}`}
-                    >
-
-                        <StationSensorDetails sensor_position={index + 1} />
-
-
-                    </TabbedShowLayout.Tab>
-                ))}
+                {Array.from({ length: 15 }, (_, index) => {
+                    return (
+                        <TabbedShowLayout.Tab
+                            key={index + 1}
+                            label={tabValue(index + 1)}
+                            path={`body${index + 1}`}
+                        >
+                            <ModifySensorAssignment sensor_position={index + 1} />
+                            <StationSensorDetails sensor_position={index + 1} />
+                        </TabbedShowLayout.Tab>
+                    )
+                })}
             </TabbedShowLayout>
         </Show >
     )
