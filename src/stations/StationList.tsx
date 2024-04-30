@@ -30,7 +30,7 @@ const StationList = () => {
     const FalseIcon = () => <Brightness1TwoToneIcon color="error" />; TrueIcon
 
     return (
-        <List disableSyncWithLocation
+        <List storeKey={false}
             actions={<StationListActions />}
             perPage={25}
         >

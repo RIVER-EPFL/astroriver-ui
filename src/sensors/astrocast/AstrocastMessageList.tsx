@@ -41,7 +41,7 @@ const AtrocastMessageList = () => {
     const FalseIcon = () => <Brightness1TwoToneIcon color="error" />; TrueIcon
 
     return (
-        <List disableSyncWithLocation
+        <List storeKey={false}
             actions={<AtrocastMessageListActions />}
             perPage={25}
             sort={{ field: 'createdDate', order: 'DESC' }}

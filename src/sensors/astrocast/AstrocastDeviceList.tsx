@@ -40,7 +40,7 @@ const AtrocastDeviceList = () => {
     const FalseIcon = () => <Brightness1TwoToneIcon color="error" />; TrueIcon
 
     return (
-        <List disableSyncWithLocation
+        <List storeKey={false}
             actions={<AtrocastDeviceListActions />}
             perPage={25}
         >
