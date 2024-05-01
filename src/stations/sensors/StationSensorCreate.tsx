@@ -42,14 +42,14 @@ const StationSensorCreate = () => {
                 <ReferenceInput
                     source="sensor_id"
                     reference="sensors"
-                // filter={{ station_link: false }}
+                    filter={{ station_link: false }}
                 >
                     <SelectInput
                         label="Sensor"
                         source="sensor_id"
                         optionText={(record) => `${record.model}:${record.serial_number} (${record.parameter.name})`}
                         validate={required()}
-                    // helperText="Sensors already attached to a station are not listed. Remove them from the station first."
+                        helperText="Sensors already attached to a station are not listed. Remove them from the station first."
                     />
                 </ReferenceInput>
                 <ReferenceInput
