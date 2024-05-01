@@ -170,6 +170,15 @@ const StationSensorDetails = props => {
                     </Grid>
                     <Grid item xs={4}>
                         <Labeled>
+                            <TextField
+                                source="field_id"
+                                label="Field ID"
+
+                            />
+                        </Labeled>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Labeled>
                             <TextField source="serial_number" />
                         </Labeled>
                     </Grid>

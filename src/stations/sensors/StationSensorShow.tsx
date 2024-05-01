@@ -52,6 +52,7 @@ const StationSensorShow = () => {
                     <FunctionField render={(record) => `${record.name} (${record.unit})`} />
                 </ReferenceField>
                 <TextField source="sensor.serial_number" />
+                <TextField source="sensor.field_id" />
                 <DateField
                     label="Installed on"
                     source="installed_on"

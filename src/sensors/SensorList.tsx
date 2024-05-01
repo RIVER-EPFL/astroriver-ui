@@ -44,6 +44,7 @@ const SensorList = () => {
                 rowClick="show"
             >
                 <TextField source="model" />
+                <TextField source="field_id" label="Field ID" />
                 <ReferenceField
                     label="Parameter"
                     source="parameter_id"

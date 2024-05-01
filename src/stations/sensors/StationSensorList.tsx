@@ -58,7 +58,7 @@ const SensorList = () => {
                     emptyText="N/A"
                     sortable={false}
                 >
-                    <FunctionField render={(record) => `${record.model} (${record.serial_number})`} />
+                    <FunctionField render={(record) => `${record.model} (${record.field_id})`} />
                 </ReferenceField>
                 <ReferenceField
                     label="Parameter"

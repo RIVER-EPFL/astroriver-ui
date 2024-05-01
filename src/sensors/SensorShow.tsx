@@ -50,6 +50,7 @@ const SensorShow = () => {
         <Show actions={<SensorShowActions />}>
             <SimpleShowLayout>
                 <TextField source="model" />
+                <TextField source="field_id" label="Field ID (to identify this sensor in control messages)" />
                 <TextField source="serial_number" />
                 <ReferenceField
                     label="Parameter"

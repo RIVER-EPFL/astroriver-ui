@@ -19,8 +19,8 @@ const SensorCreate = () => {
         <Create redirect="list">
             <SimpleForm >
                 <TextField source="id" />
-                <TextInput source="serial_number" validate={[required()]} />
                 <TextInput source="model" validate={[required()]} />
+                <TextInput source="serial_number" />
                 <ReferenceInput
                     source="parameter_id"
                     reference="sensor_parameters"
@@ -32,7 +32,7 @@ const SensorCreate = () => {
                         validate={required()}
                     />
                 </ReferenceInput>
-                <DateTimeInput source="calibrated_on" validate={[required()]} />
+
 
             </SimpleForm>
         </Create>
