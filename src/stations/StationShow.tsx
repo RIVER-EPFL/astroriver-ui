@@ -34,6 +34,86 @@ import { useEffect, useState } from 'react';
 import { StationSensorDetails } from './sensors/StationSensorDetails';
 
 
+const ModifySensorAssignment = (props) => {
+    const record = useRecordContext();
+    const refresh = useRefresh();
+
+    const DeleteAssignmentButton = () => {
+        const redirect = useRedirect();
+        const notify = useNotify();
+        const [create, { data, isLoading, loaded, error }] = useCreate(
+            'station_sensors',
+            {
+                data: {
+                    station_id: record.id,
+                    sensor_id: null,
+                    sensor_position: props.sensor_position
+                }
+            },
+
+        );
+
+        return <>
+            <Button
+                label="Remove Assignment"
+                startIcon={<ClearIcon fontSize='inherit' />}
+                onClick={(event) => {
+                    create();
+                    // notify('Assignment removed');
+                    refresh();
+                    event.stopPropagation();
+                }
+                }
+            /></>;
+    };
+
+
+    if (props.sensorRecord === false) {
+        return (
+            <TopToolbar>
+                <CreateButton
+                    label="Assign sensor"
+                    resource="station_sensors"
+                    state={{
+                        record: {
+                            station_id: record.id,
+                            sensor_position: props.sensor_position
+                        }
+                    }}
+                />
+            </TopToolbar>
+        );
+    } else {
+        return (
+            <TopToolbar>
+                <><CreateButton
+                    label="Replace sensor"
+                    resource="station_sensors"
+                    state={{
+                        record: {
+                            station_id: record.id,
+                            sensor_position: props.sensor_position
+                        }
+                    }}
+                /><DeleteAssignmentButton /></>
+
+            </TopToolbar>
+        );
+    }
+}
+
+const tabValue = (sensorRecord, sensorPosition) => {
+    // Gets the sensor and returns the tab name in the station
+
+    if (sensorRecord === false) {
+        return `${sensorPosition}: N/A`;
+    }
+    if (sensorRecord === null) { // Still loading
+        return `${sensorPosition}: Loading`;
+    }
+
+    return `${sensorPosition}: ${sensorRecord.parameter.name}`;
+}
 
 const StationShow = () => {
     const StationShowActions = () => {
@@ -74,94 +154,9 @@ const StationShow = () => {
         }
     }
 
-    const tabValue = (sensorRecord, sensorPosition) => {
-        // Gets the sensor and returns the tab name in the station
-
-        if (sensorRecord === false) {
-            return `${sensorPosition}: N/A`;
-        }
-        if (sensorRecord === null) { // Still loading
-            return `${sensorPosition}: Loading`;
-        }
-
-        return `${sensorPosition}: ${sensorRecord.parameter.name}`;
-    }
-
     const recordId = useGetRecordId();
 
-    const ModifySensorAssignment = (props) => {
-        const record = useRecordContext();
-        const refresh = useRefresh();
 
-        const DeleteAssignmentButton = () => {
-            const redirect = useRedirect();
-            const notify = useNotify();
-            const [create, { data, isLoading, loaded, error }] = useCreate(
-                'station_sensors',
-                {
-                    data: {
-                        station_id: record.id,
-                        sensor_id: null,
-                        sensor_position: props.sensor_position
-                    }
-                },
-                {
-                    onSuccess: (data) => {
-                        notify('Assignment removed');
-                        redirect(`/stations/${data.station_id}/show`);
-                    },
-                    onError: (error) => {
-                        notify(`Assignment creation error: ${error.message}`, { type: 'error' });
-                    },
-                }
-            );
-            // useEffect(() => {
-            //     refresh();
-            //     // redirect(`/stations/${data.station_id}/show`);
-            // }, [loaded]);
-
-            return <>
-                <Button
-                    label="Remove Assignment"
-                    startIcon={<ClearIcon fontSize='inherit' />}
-                    onClick={() => create()}
-                    disabled={isLoading} /></>;
-        };
-
-
-        if (props.sensorRecord === false) {
-            return (
-                <TopToolbar>
-                    <CreateButton
-                        label="Assign sensor"
-                        resource="station_sensors"
-                        state={{
-                            record: {
-                                station_id: record.id,
-                                sensor_position: props.sensor_position
-                            }
-                        }}
-                    />
-                </TopToolbar>
-            );
-        } else {
-            return (
-                <TopToolbar>
-                    <><CreateButton
-                        label="Replace sensor"
-                        resource="station_sensors"
-                        state={{
-                            record: {
-                                station_id: record.id,
-                                sensor_position: props.sensor_position
-                            }
-                        }}
-                    /><DeleteAssignmentButton /></>
-                </TopToolbar>
-            );
-        }
-
-    }
     const tabs = Array.from({ length: 24 }, (_, index) => {
         const sensorRecord = getCurrentSensor(recordId, index + 1);
 
