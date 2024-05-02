@@ -32,7 +32,7 @@ const SensorEdit = () => {
                     <SelectInput
                         label="Sensor"
                         source="sensor_id"
-                        optionText={(record) => `${record.model}:${record.serial_number} (${record.parameter.name})`}
+                        optionText={(record) => `${record.model}:${record.field_id} (${record.parameter.name})`}
                         validate={required()}
                         helperText="Sensors already attached to a station are not listed. Remove them from the station first."
                     />
@@ -68,6 +68,15 @@ const SensorEdit = () => {
                         { id: '13', name: '13' },
                         { id: '14', name: '14' },
                         { id: '15', name: '15' },
+                        { id: '16', name: '16' },
+                        { id: '17', name: '17' },
+                        { id: '18', name: '18' },
+                        { id: '19', name: '19' },
+                        { id: '20', name: '20' },
+                        { id: '21', name: '21' },
+                        { id: '22', name: '22' },
+                        { id: '23', name: '23' },
+                        { id: '24', name: '24' },
                     ]}
                 />
                 <DateTimeInput

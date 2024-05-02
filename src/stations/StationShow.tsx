@@ -20,11 +20,11 @@ import {
     Datagrid,
     NumberField,
     CreateButton,
-    useRedirect,
     useRefresh,
     useNotify,
-    useDelete,
     Button,
+    useCreate,
+    Loading,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
 import Plot from 'react-plotly.js';
 import { Grid } from '@mui/material';
@@ -38,23 +38,48 @@ const StationShowActions = () => {
         </TopToolbar>
     );
 }
-
-const tabValue = (id: number) => {
-    const recordId = useGetRecordId();
-    const { data, isLoading, error } = useGetOne('stations', { id: recordId });
+const getCurrentSensor = (stationID: number, sensorPosition: number) => {
+    const { data, isLoading, error } = useGetOne('stations', { id: stationID });
     if (isLoading) return null;
+    // Search the sensor array, for the station_link that matches the sensor
+    // position sorted by date. This is the sensor that is currently installed.
+    // If no sensor is installed, the sensor_link will be null.
+    const sensor = data.sensors.find(
+        sensor => sensor.station_link.sensor_position == sensorPosition
+    );
+    // Get all sensor IDs that match the sensor position
+    // Get all sensor links matching the sensor position
+    const sensorLinks = data.sensor_link.filter(
+        link => link.sensor_position == sensorPosition
+    );
 
-    // Get the data.sensor_link.sensor_id for the
-    // data.sensor_link.sensor_position that corresponds to the id param
-    const sensor_link = data.sensor_link.find(link => link.sensor_position == id);
-    if (sensor_link) {
-        const sensor = data.sensors.find(sensor => sensor.id === sensor_link.sensor_id);
-        if (sensor.parameter) {
-            return `${id}: ${sensor.parameter.name}`;
-        }
+    // Sort the sensor links by 'installed_on' descending
+    sensorLinks.sort((a, b) => new Date(b.installed_on) - new Date(a.installed_on));
+
+    // Get the first sensor ID after sorting (limit 1)
+    const latestSensorID = sensorLinks.length > 0 ? sensorLinks[0].sensor_id : null;
+    if (latestSensorID === null) {
+        return false;
+    } else {
+        // Query for the sensor of this ID
+        const { data, isLoading, error } = useGetOne('sensors', { id: latestSensorID });
+        if (isLoading) return null;
+        return data;
     }
-    return `${id}: N/A`;
+}
 
+const tabValue = (stationID: number, sensorPosition: number) => {
+    // Gets the sensor and returns the tab name in the station
+    const sensor = getCurrentSensor(stationID, sensorPosition);
+
+    if (sensor === false) {
+        return `${sensorPosition}: N/A`;
+    }
+    if (sensor === null) { // Still loading
+        return `${sensorPosition}: Loading`;
+    }
+
+    return `${sensorPosition}: ${sensor.parameter.name}`;
 }
 
 
@@ -118,24 +143,23 @@ const HighFrequencyPlot = () => {
 
 const StationSensorDetails = props => {
     // The sensor details layout lives here..!
+
     const recordId = useGetRecordId();
-    const { data, isLoading, error } = useGetOne('stations', { id: recordId });
-    if (isLoading) return null;
-
-    // Search the sensor array, for the station_link that matches props sensor_position
-    const sensor = data.sensors.find(
-        sensor => sensor.station_link.sensor_position == props.sensor_position
-    );
-
+    const sensorRecord = getCurrentSensor(recordId, props.sensor_position);
+    if (sensorRecord === false) {
+        return <h3>No sensor installed</h3>;
+    } else if (sensorRecord === null) {
+        return <Loading />
+    }
     const currentCorrectionEq = (record) => {
-        console.log(record);
+        // console.log(record);
         if (record.calibrations.length === 0) return 'N/A';
         return `y = ${record.calibrations[0].slope}*bytes + ${record.calibrations[0].intercept}`;
     }
 
 
     return (
-        <RecordContextProvider value={sensor}>
+        <RecordContextProvider value={sensorRecord}>
             <h3>Installed sensor: </h3>
             <SimpleShowLayout >
                 <Grid container >
@@ -246,21 +270,32 @@ const ModifySensorAssignment = (props) => {
         const refresh = useRefresh();
         const record = useRecordContext();
         const notify = useNotify();
-        const [deleteOne, { isLoading }] = useDelete(
+        const [create, { data, isLoading, loaded, error }] = useCreate(
             'station_sensors',
-            { id: sensor_link.id },
+            {
+                data: {
+                    station_id: record.id,
+                    sensor_id: null,
+                    sensor_position: props.sensor_position
+                }
+            },
             {
                 onSuccess: (data) => {
                     refresh();
-                    notify('Assignment deleted');
+                    notify('Assignment removed');
                 },
                 onError: (error) => {
-                    notify(`Assignment deletion error: ${error.message}`, { type: 'error' });
+                    notify(`Assignment creation error: ${error.message}`, { type: 'error' });
                 },
             }
         );
 
-        return <><Button label="Remove Assignment" startIcon={<ClearIcon fontSize='inherit' />} onClick={() => deleteOne()} disabled={isLoading} /></>;
+        return <>
+            <Button
+                label="Remove Assignment"
+                startIcon={<ClearIcon fontSize='inherit' />}
+                onClick={() => create()}
+                disabled={isLoading} /></>;
     };
 
     if (sensor_link === undefined) {
@@ -294,9 +329,10 @@ const ModifySensorAssignment = (props) => {
 }
 
 const StationShow = () => {
+    const recordId = useGetRecordId();
     return (
         <Show actions={<StationShowActions />} sx={{
-            width: 0.75
+            width: 0.5
         }}>
 
             <SimpleShowLayout >
@@ -371,11 +407,11 @@ const StationShow = () => {
                         allowScrollButtonsMobile={true}
                     />}
             >
-                {Array.from({ length: 15 }, (_, index) => {
+                {Array.from({ length: 24 }, (_, index) => {
                     return (
                         <TabbedShowLayout.Tab
                             key={index + 1}
-                            label={tabValue(index + 1)}
+                            label={tabValue(recordId, index + 1)}
                             path={`body${index + 1}`}
                         >
                             <ModifySensorAssignment sensor_position={index + 1} />
