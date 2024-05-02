@@ -25,316 +25,162 @@ import {
     Button,
     useCreate,
     Loading,
+    useRedirect,
 } from 'react-admin'; // eslint-disable-line import/no-unresolved
-import Plot from 'react-plotly.js';
 import { Grid } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
-
-const StationShowActions = () => {
-    const { permissions } = usePermissions();
-    return (
-        <TopToolbar>
-            {permissions === 'admin' && <><EditButton /><DeleteButton /></>}
-        </TopToolbar>
-    );
-}
-const getCurrentSensor = (stationID: number, sensorPosition: number) => {
-    const { data, isLoading, error } = useGetOne('stations', { id: stationID });
-    if (isLoading) return null;
-    // Search the sensor array, for the station_link that matches the sensor
-    // position sorted by date. This is the sensor that is currently installed.
-    // If no sensor is installed, the sensor_link will be null.
-    const sensor = data.sensors.find(
-        sensor => sensor.station_link.sensor_position == sensorPosition
-    );
-    // Get all sensor IDs that match the sensor position
-    // Get all sensor links matching the sensor position
-    const sensorLinks = data.sensor_link.filter(
-        link => link.sensor_position == sensorPosition
-    );
-
-    // Sort the sensor links by 'installed_on' descending
-    sensorLinks.sort((a, b) => new Date(b.installed_on) - new Date(a.installed_on));
-
-    // Get the first sensor ID after sorting (limit 1)
-    const latestSensorID = sensorLinks.length > 0 ? sensorLinks[0].sensor_id : null;
-    if (latestSensorID === null) {
-        return false;
-    } else {
-        // Query for the sensor of this ID
-        const { data, isLoading, error } = useGetOne('sensors', { id: latestSensorID });
-        if (isLoading) return null;
-        return data;
-    }
-}
-
-const tabValue = (stationID: number, sensorPosition: number) => {
-    // Gets the sensor and returns the tab name in the station
-    const sensor = getCurrentSensor(stationID, sensorPosition);
-
-    if (sensor === false) {
-        return `${sensorPosition}: N/A`;
-    }
-    if (sensor === null) { // Still loading
-        return `${sensorPosition}: Loading`;
-    }
-
-    return `${sensorPosition}: ${sensor.parameter.name}`;
-}
+import { get } from 'http';
+import { useEffect, useState } from 'react';
+import { StationSensorDetails } from './sensors/StationSensorDetails';
 
 
-const HighFrequencyPlot = () => {
-    // Generate 100 data points over 2 years
-    const startDate = new Date('2024-01-01'); // Start date
-    const endDate = new Date('2026-01-01'); // End date
-    const interval = (endDate - startDate) / 99; // Calculate interval between each point
-
-    // Generate time series data with evenly spaced timestamps and random values for demonstration
-    const timeSeriesData = Array.from({ length: 100 }, (_, index) => {
-        const timestamp = new Date(startDate.getTime() + index * interval).toISOString().split('T')[0];
-        const value = Math.random() * 100; // Random value for demonstration
-        return { timestamp, value };
-    });
-
-    // Extract x and y values from time series data
-    const xValues = timeSeriesData.map(dataPoint => dataPoint.timestamp);
-    const yValues = timeSeriesData.map(dataPoint => dataPoint.value);
-
-    return (
-        <Plot
-            data={[
-                {
-                    x: xValues,
-                    y: yValues,
-                    type: 'scatter',
-                    mode: 'lines+markers',
-                    marker: { color: 'blue' }, // Customize marker color if needed
-                },
-            ]}
-            layout={{
-                width: 1000, height: 400, title: 'Sensor high frequency time series',
-                xaxis: {
-                    rangeselector: {
-                        buttons: [
-                            {
-                                count: 1,
-                                label: '1m',
-                                step: 'month',
-                                stepmode: 'backward'
-                            },
-                            {
-                                count: 6,
-                                label: '6m',
-                                step: 'month',
-                                stepmode: 'backward'
-                            },
-                            { step: 'all' }
-                        ]
-                    },
-                    rangeslider: { range: [startDate, endDate] },
-                    range: ["2024-01-01", "2024-06-01"],
-                    type: 'date'
-                }
-            }}
-
-        />
-    )
-}
-
-const StationSensorDetails = props => {
-    // The sensor details layout lives here..!
-
-    const recordId = useGetRecordId();
-    const sensorRecord = getCurrentSensor(recordId, props.sensor_position);
-    if (sensorRecord === false) {
-        return <h3>No sensor installed</h3>;
-    } else if (sensorRecord === null) {
-        return <Loading />
-    }
-    const currentCorrectionEq = (record) => {
-        // console.log(record);
-        if (record.calibrations.length === 0) return 'N/A';
-        return `y = ${record.calibrations[0].slope}*bytes + ${record.calibrations[0].intercept}`;
-    }
-
-
-    return (
-        <RecordContextProvider value={sensorRecord}>
-            <h3>Installed sensor: </h3>
-            <SimpleShowLayout >
-                <Grid container >
-                    <Grid item xs={4}>
-                        <Labeled>
-                            <TextField
-                                source="model"
-                                label="Sensor model"
-                            />
-                        </Labeled>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Labeled>
-                            <DateField
-                                label="Install date"
-                                source="station_link.installed_on"
-                                sortable={false}
-                                showTime={true}
-                            />
-                        </Labeled>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Labeled>
-                            <DateField // Assumes list is sorted by date
-                                label="Last calibration date"
-                                source="calibrations[0].calibrated_on"
-                                sortable={false}
-                                showTime={true}
-                                emptyText='Never calibrated'
-                            />
-                        </Labeled>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Labeled>
-                            <TextField
-                                source="field_id"
-                                label="Field ID"
-
-                            />
-                        </Labeled>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Labeled>
-                            <TextField source="serial_number" />
-                        </Labeled>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Labeled>
-                            <FunctionField
-                                label="Current correction eq."
-                                render={currentCorrectionEq}
-                            />
-                        </Labeled>
-                    </Grid>
-                </Grid>
-                <ArrayField source="calibrations">
-                    <Datagrid
-                        bulkActionButtons={false}
-                        style={{ tableLayout: 'fixed', width: '100%' }}>
-                        <DateField
-                            source="calibrated_on"
-                            label="Calibrated On"
-                            showTime={true}
-                            sortable={false}
-                        />
-                        <NumberField
-                            source="intercept"
-                            label="Intercept"
-                            sortable={false}
-                        />
-                        <NumberField
-                            source="slope"
-                            label="Slope"
-                            sortable={false}
-                        />
-                        <NumberField
-                            source="min_range"
-                            label="Min Range"
-                            sortable={false}
-                        />
-                        <NumberField
-                            source="max_range"
-                            label="Max Range"
-                            sortable={false}
-                        />
-
-
-                    </Datagrid>
-                </ArrayField>
-                <HighFrequencyPlot />
-            </SimpleShowLayout>
-        </RecordContextProvider>
-    );
-
-}
-const ModifySensorAssignment = (props) => {
-    const record = useRecordContext();
-    const { permissions } = usePermissions();
-    const refresh = useRefresh();
-    // Get the station_sensor link from the record.sensor_link array. If it
-    // is null, there is no sensor assigned to this station position.
-    const sensor_link = record.sensor_link.find(
-        link => link.sensor_position == props.sensor_position
-    );
-
-
-    const DeleteAssignmentButton = () => {
-        const refresh = useRefresh();
-        const record = useRecordContext();
-        const notify = useNotify();
-        const [create, { data, isLoading, loaded, error }] = useCreate(
-            'station_sensors',
-            {
-                data: {
-                    station_id: record.id,
-                    sensor_id: null,
-                    sensor_position: props.sensor_position
-                }
-            },
-            {
-                onSuccess: (data) => {
-                    refresh();
-                    notify('Assignment removed');
-                },
-                onError: (error) => {
-                    notify(`Assignment creation error: ${error.message}`, { type: 'error' });
-                },
-            }
-        );
-
-        return <>
-            <Button
-                label="Remove Assignment"
-                startIcon={<ClearIcon fontSize='inherit' />}
-                onClick={() => create()}
-                disabled={isLoading} /></>;
-    };
-
-    if (sensor_link === undefined) {
-        return (
-            <TopToolbar>
-                {permissions === 'admin' && <CreateButton
-                    label="Assign sensor"
-                    resource="station_sensors"
-                    state={{
-                        record: {
-                            station_id: record.id,
-                            sensor_position: props.sensor_position
-                        }
-                    }}
-                />}
-            </TopToolbar>
-        );
-    } else {
-        return (
-            <TopToolbar>
-                {permissions === 'admin' && <><EditButton
-                    label="Manage sensor assignment"
-                    resource="station_sensors"
-                    record={{ id: sensor_link.id }}
-                /><DeleteAssignmentButton /></>}
-            </TopToolbar>
-
-        );
-    }
-
-}
 
 const StationShow = () => {
+    const StationShowActions = () => {
+        const { permissions } = usePermissions();
+        return (
+            <TopToolbar>
+                {permissions === 'admin' && <><EditButton /><DeleteButton /></>}
+            </TopToolbar>
+        );
+    }
+    const getCurrentSensor = (stationID: number, sensorPosition: number) => {
+        const { data, isLoading, error } = useGetOne('stations', { id: stationID });
+        if (isLoading) return null;
+        // Search the sensor array, for the station_link that matches the sensor
+        // position sorted by date. This is the sensor that is currently installed.
+        // If no sensor is installed, the sensor_link will be null.
+        const sensor = data.sensors.find(
+            sensor => sensor.station_link.sensor_position == sensorPosition
+        );
+        // Get all sensor IDs that match the sensor position
+        // Get all sensor links matching the sensor position
+        const sensorLinks = data.sensor_link.filter(
+            link => link.sensor_position == sensorPosition
+        );
+
+        // Sort the sensor links by 'installed_on' descending
+        sensorLinks.sort((a, b) => new Date(b.installed_on) - new Date(a.installed_on));
+
+        // Get the first sensor ID after sorting (limit 1)
+        const latestSensorID = sensorLinks.length > 0 ? sensorLinks[0].sensor_id : null;
+        if (latestSensorID === null) {
+            return false;
+        } else {
+            // Query for the sensor of this ID
+            const { data, isLoading, error } = useGetOne('sensors', { id: latestSensorID });
+            if (isLoading) return null;
+            return data;
+        }
+    }
+
+    const tabValue = (sensorRecord, sensorPosition) => {
+        // Gets the sensor and returns the tab name in the station
+
+        if (sensorRecord === false) {
+            return `${sensorPosition}: N/A`;
+        }
+        if (sensorRecord === null) { // Still loading
+            return `${sensorPosition}: Loading`;
+        }
+
+        return `${sensorPosition}: ${sensorRecord.parameter.name}`;
+    }
+
     const recordId = useGetRecordId();
+
+    const ModifySensorAssignment = (props) => {
+        const record = useRecordContext();
+        const refresh = useRefresh();
+
+        const DeleteAssignmentButton = () => {
+            const redirect = useRedirect();
+            const notify = useNotify();
+            const [create, { data, isLoading, loaded, error }] = useCreate(
+                'station_sensors',
+                {
+                    data: {
+                        station_id: record.id,
+                        sensor_id: null,
+                        sensor_position: props.sensor_position
+                    }
+                },
+                {
+                    onSuccess: (data) => {
+                        notify('Assignment removed');
+                        redirect(`/stations/${data.station_id}/show`);
+                    },
+                    onError: (error) => {
+                        notify(`Assignment creation error: ${error.message}`, { type: 'error' });
+                    },
+                }
+            );
+            // useEffect(() => {
+            //     refresh();
+            //     // redirect(`/stations/${data.station_id}/show`);
+            // }, [loaded]);
+
+            return <>
+                <Button
+                    label="Remove Assignment"
+                    startIcon={<ClearIcon fontSize='inherit' />}
+                    onClick={() => create()}
+                    disabled={isLoading} /></>;
+        };
+
+
+        if (props.sensorRecord === false) {
+            return (
+                <TopToolbar>
+                    <CreateButton
+                        label="Assign sensor"
+                        resource="station_sensors"
+                        state={{
+                            record: {
+                                station_id: record.id,
+                                sensor_position: props.sensor_position
+                            }
+                        }}
+                    />
+                </TopToolbar>
+            );
+        } else {
+            return (
+                <TopToolbar>
+                    <><CreateButton
+                        label="Replace sensor"
+                        resource="station_sensors"
+                        state={{
+                            record: {
+                                station_id: record.id,
+                                sensor_position: props.sensor_position
+                            }
+                        }}
+                    /><DeleteAssignmentButton /></>
+                </TopToolbar>
+            );
+        }
+
+    }
+    const tabs = Array.from({ length: 24 }, (_, index) => {
+        const sensorRecord = getCurrentSensor(recordId, index + 1);
+
+        return (
+            <TabbedShowLayout.Tab
+                key={index + 1}
+                label={tabValue(sensorRecord, index + 1)}
+                path={`body${index + 1}`}
+            >
+                <ModifySensorAssignment sensorRecord={sensorRecord} sensor_position={index + 1} />
+                <StationSensorDetails sensorRecord={sensorRecord} />
+            </TabbedShowLayout.Tab>
+        )
+    });
+
     return (
         <Show actions={<StationShowActions />} sx={{
             width: 0.5
         }}>
-
             <SimpleShowLayout >
                 <FunctionField
                     render={record => `${record.name} (${record.acronym})`}
@@ -407,18 +253,7 @@ const StationShow = () => {
                         allowScrollButtonsMobile={true}
                     />}
             >
-                {Array.from({ length: 24 }, (_, index) => {
-                    return (
-                        <TabbedShowLayout.Tab
-                            key={index + 1}
-                            label={tabValue(recordId, index + 1)}
-                            path={`body${index + 1}`}
-                        >
-                            <ModifySensorAssignment sensor_position={index + 1} />
-                            <StationSensorDetails sensor_position={index + 1} />
-                        </TabbedShowLayout.Tab>
-                    )
-                })}
+                {tabs}
             </TabbedShowLayout>
         </Show >
     )

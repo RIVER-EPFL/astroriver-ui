@@ -33,8 +33,18 @@ const StationSensorCreate = () => {
 
     const redirect = useRedirect();
     const onSuccess = (record) => {
-        redirect(`/stations/${record.station_id}/show/body${record.sensor_position}`);
+        // redirect(`/stations/${record.station_id}/show/body${record.sensor_position}`);
+        redirect(`/stations/${record.station_id}/show`);
     }
+
+    const assignmentText = (record) => {
+        if (record.station_link !== null) {
+            return "*";
+        } else {
+            return "";
+        }
+    }
+
     return (
         <Create mutationOptions={{ onSuccess }}>
             <SimpleForm toolbar={<CreateToolbar />}>
@@ -42,14 +52,13 @@ const StationSensorCreate = () => {
                 <ReferenceInput
                     source="sensor_id"
                     reference="sensors"
-                    filter={{ station_link: false }}
                 >
                     <SelectInput
                         label="Sensor"
                         source="sensor_id"
-                        optionText={(record) => `${record.model}:${record.field_id} (${record.parameter.name})`}
+                        optionText={(record) => `${record.model}:${record.field_id} (${record.parameter.name}) ${assignmentText(record)}`}
                         validate={required()}
-                        helperText="Sensors already attached to a station are not listed. Remove them from the station first."
+                        helperText="Sensors already attached to a station are annotated with *. Using them will remove them from their station."
                     />
                 </ReferenceInput>
                 <ReferenceInput
