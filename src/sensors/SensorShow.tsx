@@ -64,7 +64,7 @@ const SensorShow = () => {
                 </ReferenceField>
                 <ReferenceField
                     label="Assigned Station"
-                    source="station_link.station_id"
+                    source="current_assignment.station_id"
                     reference="stations"
                     link="show"
                     emptyText="N/A"

@@ -13,15 +13,6 @@ import {
     Toolbar,
 } from 'react-admin';
 
-const AvailableSensorPositions = () => {
-    // Get the sensor positions already taken by checking sensor_link on
-
-    const positions = [];
-    for (let i = 1; i <= 15; i++) {
-        positions.push({ id: i, name: i });
-    }
-    return positions;
-}
 
 const CreateToolbar = () => (
     <Toolbar>
@@ -38,7 +29,8 @@ const StationSensorCreate = () => {
     }
 
     const assignmentText = (record) => {
-        if (record.station_link !== null) {
+        console.log("STATION_LINK", record)
+        if (record.current_assignment !== null) {
             return "*";
         } else {
             return "";
@@ -52,6 +44,7 @@ const StationSensorCreate = () => {
                 <ReferenceInput
                     source="sensor_id"
                     reference="sensors"
+                    sort={{ field: 'model', order: 'ASC' }}
                 >
                     <SelectInput
                         label="Sensor"

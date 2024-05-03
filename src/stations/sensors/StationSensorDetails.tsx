@@ -18,11 +18,13 @@ import { Grid } from '@mui/material';
 
 export const StationSensorDetails = (props) => {
     // The sensor details layout lives here..!
-    console.log("PROPS", props);
+
     const currentCorrectionEq = (record) => {
         if (record.calibrations.length === 0) return 'N/A';
         return `y = ${record.calibrations[0].slope}*bytes + ${record.calibrations[0].intercept}`;
     }
+
+    if (props.sensorRecord === false) { return <h3>No sensor assigned </h3> };
 
     return (
         <RecordContextProvider value={props.sensorRecord}>
