@@ -52,7 +52,7 @@ const DeleteAssignmentButton = (props) => {
         'station_sensors',
         {
             data: {
-                station_id: props.record.current_assignment.station_id,
+                station_id: props.record.current_assignment?.station_id,
                 sensor_id: null,
                 sensor_position: props.sensorPosition
             }
