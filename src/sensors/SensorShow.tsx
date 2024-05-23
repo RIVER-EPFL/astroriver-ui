@@ -67,7 +67,7 @@ const SensorShow = () => {
                     source="current_assignment.station_id"
                     reference="stations"
                     link="show"
-                    emptyText="N/A"
+                    emptyText="Not currently assigned to any station"
                 >
                     <FunctionField
                         label="Active"
@@ -106,8 +106,39 @@ const SensorShow = () => {
                             source="max_range"
                             label="Max Range"
                         />
-
-
+                    </Datagrid>
+                </ArrayField>
+                <ArrayField
+                    source="history"
+                    label="Prior station associations"
+                >
+                    <Datagrid
+                        bulkActionButtons={false}
+                        style={{ tableLayout: 'fixed', }}>
+                        <DateField
+                            source="from"
+                            label="Installed at"
+                            showTime={true}
+                        />
+                        <DateField
+                            source="to"
+                            label="Removed at"
+                            showTime={true}
+                        />
+                        <ReferenceField source="station_id" reference="stations" link="show">
+                            <TextField
+                                source="name"
+                                label="Station Name"
+                            />
+                        </ReferenceField>
+                        <TextField
+                            source="sensor_position"
+                            label="Position"
+                        />
+                        <TextField
+                            source="station_location"
+                            label="Station Location"
+                        />
                     </Datagrid>
                 </ArrayField>
 

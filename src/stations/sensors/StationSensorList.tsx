@@ -34,6 +34,7 @@ const SensorList = () => {
         <List storeKey={false}
             actions={<SensorListActions />}
             perPage={25}
+            sort={{ field: 'installed_on', order: 'DESC' }}
         >
             <Datagrid
                 bulkActionButtons={permissions === 'admin' ? true : false}
@@ -73,7 +74,6 @@ const SensorList = () => {
                 <DateField
                     label="Installed on"
                     source="installed_on"
-                    sortable={false}
                     showTime={true}
                 />
             </Datagrid>

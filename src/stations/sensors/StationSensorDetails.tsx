@@ -12,9 +12,12 @@ import {
     ArrayField,
     Datagrid,
     NumberField,
+    useCreatePath,
+    Link,
 } from 'react-admin';
 import { HighFrequencyPlot } from '../Plots';
 import { Grid } from '@mui/material';
+import { stopPropagation } from 'ol/events/Event';
 
 export const StationSensorDetails = (props) => {
     // The sensor details layout lives here..!
@@ -26,6 +29,38 @@ export const StationSensorDetails = (props) => {
 
     if (props.sensorRecord === false) { return <h3>No sensor assigned </h3> };
 
+    const SensorNameField = () => {
+        const record = useRecordContext();
+        const createPath = useCreatePath();
+        const path = createPath({
+            resource: 'sensors',
+            type: 'show',
+            id: record.id,
+        });
+        return (
+            <Link to={path} onClick={stopPropagation}>
+                <TextField source="model" />
+            </Link>
+        );
+    }
+    const FieldWrapper = ({ children, label }) => children;
+
+    // Installed date is the latest sensor_link sorted by installed_on desc
+    // Sort the station_link list and get the most recent
+    const installed_on = (record) => {
+        if (record.station_link.length === 0) return 'N/A';
+        // Sort the list by installed_on date and use the first element
+        record.station_link.sort(
+            (a, b) => new Date(b.installed_on) - new Date(a.installed_on)
+        );
+        const date = new Date(record.station_link[0].installed_on);
+        return (`${date.toLocaleDateString()} ${date.toLocaleTimeString()}`)
+
+
+    }
+
+    console.log("props.sensorRecord", props.sensorRecord)
+
     return (
         <RecordContextProvider value={props.sensorRecord}>
             <h3>Installed sensor: </h3>
@@ -33,19 +68,16 @@ export const StationSensorDetails = (props) => {
                 <Grid container >
                     <Grid item xs={4}>
                         <Labeled>
-                            <TextField
-                                source="model"
-                                label="Sensor model"
-                            />
+                            <FieldWrapper label="Model">
+                                <SensorNameField />
+                            </FieldWrapper>
                         </Labeled>
                     </Grid>
                     <Grid item xs={4}>
                         <Labeled>
-                            <DateField
-                                label="Install date"
-                                source="station_link.installed_on"
-                                sortable={false}
-                                showTime={true}
+                            <FunctionField
+                                label="Installed on"
+                                render={installed_on}
                             />
                         </Labeled>
                     </Grid>
@@ -65,7 +97,6 @@ export const StationSensorDetails = (props) => {
                             <TextField
                                 source="field_id"
                                 label="Field ID"
-
                             />
                         </Labeled>
                     </Grid>

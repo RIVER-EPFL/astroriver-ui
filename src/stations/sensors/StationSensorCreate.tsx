@@ -27,6 +27,7 @@ const StationSensorCreate = () => {
         // redirect(`/stations/${record.station_id}/show/body${record.sensor_position}`);
         redirect(`/stations/${record.station_id}/show`);
     }
+    
 
     const assignmentText = (record) => {
         console.log("STATION_LINK", record)

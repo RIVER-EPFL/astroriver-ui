@@ -47,7 +47,6 @@ const StationShowActions = () => {
 const DeleteAssignmentButton = (props) => {
     const refresh = useRefresh();
     const notify = useNotify();
-    console.log("PROPS RECORD", props.record)
     const [create, { data, isLoading, loaded, error }] = useCreate(
         'station_sensors',
         {
@@ -115,6 +114,7 @@ const StationShow = () => {
     const recordId = useGetRecordId();
     const record = useGetOne('stations', { id: recordId });
 
+    if (!record) { return <Loading />; }
     const getCurrentSensor = (record, sensorPosition) => {
         // Gets the sensor record for the sensor with the latest installation date
 
@@ -143,7 +143,7 @@ const StationShow = () => {
     const tabs = Array.from({ length: 24 }, (_, index) => {
         return getCurrentSensor(record, index + 1);
     });
-
+    console.log("tabs", tabs);
     return (
         <Show actions={<StationShowActions />} sx={{
             width: 0.5
